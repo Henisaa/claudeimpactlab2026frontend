@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/**
+ * SISTEMA VISUAL — "la ficha"
+ *
+ * La app se lee como un documento clínico bien editado, no como un dashboard.
+ * Tres decisiones que no son estéticas sino funcionales:
+ *
+ *  1. Papel cálido, no blanco puro. El blanco #FFF a brillo alto deslumbra;
+ *     un tono cálido baja el contraste especular sin bajar el de lectura.
+ *  2. Serif de texto (Source Serif 4) para las preguntas al paciente. A tamaños
+ *     grandes, un serif humanista con altura-x amplia se lee mejor y se percibe
+ *     más calmado que un grotesco geométrico.
+ *  3. Semáforo desaturado. Un rojo bombero grita; un rojo ladrillo informa.
+ *     El objetivo declarado del producto es no generar falsas alarmas: eso
+ *     también se decide en el color.
+ *
+ * Solo modo claro, a propósito. El modo oscuro con población mayor y contenido
+ * clínico agrega riesgo de contraste sin beneficio real de uso.
+ */
+
+@theme {
+  /* Papel e tinta */
+  --color-papel: oklch(0.985 0.006 85);
+  --color-papel-hondo: oklch(0.958 0.009 85);
+  --color-papel-alto: oklch(0.995 0.003 85);
+  --color-tinta: oklch(0.24 0.014 60);
+  --color-tinta-media: oklch(0.47 0.014 60);
+  --color-tinta-tenue: oklch(0.63 0.012 60);
+  --color-linea: oklch(0.88 0.012 75);
+  --color-linea-fuerte: oklch(0.78 0.014 75);
+
+  /* Semáforo: desaturado y serio */
+  --color-verde: oklch(0.47 0.088 155);
+  --color-verde-claro: oklch(0.945 0.028 155);
+  --color-ambar: oklch(0.6 0.115 70);
+  --color-ambar-claro: oklch(0.955 0.042 80);
+  --color-rojo: oklch(0.46 0.145 30);
+  --color-rojo-claro: oklch(0.945 0.032 30);
+
+  --font-titulo: var(--fuente-serif), Georgia, serif;
+  --font-texto: var(--fuente-sans), system-ui, sans-serif;
+
+  --radius-ficha: 0.75rem;
+}
+
+:root {
+  color-scheme: light;
+  font-size: 18px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--font-texto);
+  line-height: 1.6;
+  font-feature-settings: "kern";
+}
+
+/* En @layer components para que las utilidades de Tailwind puedan sobreescribir. */
+@layer components {
+  /* Etiqueta versalita: el recurso que marca metadatos en toda la app. */
+  .marca {
+    font-family: var(--font-texto);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--color-tinta-tenue);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cifra {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /**
+   * Marca de corrección: un dato extraído por la IA que todavía nadie confirmó
+   * contra el papel original. Subrayado punteado, como una prueba de imprenta.
+   */
+  .sin-confirmar {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--color-ambar);
+  }
+}
+
+/* Ningún control interactivo bajo el objetivo táctil recomendado. */
+button,
+[role="button"],
+a.boton,
+input[type="file"],
+select {
+  min-height: 3rem;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--color-tinta);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.surgir {
+  animation: surgir 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
