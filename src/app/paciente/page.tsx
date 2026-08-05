@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { LineaTiempo } from "@/components/linea-tiempo";
 import { Semaforo } from "@/components/semaforo";
 import { Marca } from "@/components/ui";
+import { registrarCheckin, sesionActual } from "@/lib/api";
 import { CASO_RECUPERACION_ESPERADA } from "@/lib/caso-sintetico";
 import { MATRIZ_ETC } from "@/lib/matriz-etc";
 import { diaRelativo, evaluar, preguntasDelDia } from "@/lib/motor";
@@ -139,6 +140,20 @@ function Resultado({
     [respuestas, dia],
   );
 
+  // Con sesión, el check-in queda documentado en el backend (`seguimientos` y,
+  // si corresponde, `alertas`). El color mostrado sigue saliendo del motor
+  // local: es el mismo motor determinístico que corre el servidor.
+  const [guardado, setGuardado] = useState<"no" | "si" | "error">("no");
+  const enviado = useRef(false);
+  useEffect(() => {
+    const sesion = sesionActual();
+    if (!sesion?.pacienteActivo || enviado.current) return;
+    enviado.current = true;
+    registrarCheckin(sesion.pacienteActivo, respuestas)
+      .then(() => setGuardado("si"))
+      .catch(() => setGuardado("error"));
+  }, [respuestas]);
+
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
       <Semaforo color={evaluacion.color}>
@@ -195,6 +210,16 @@ function Resultado({
             ))}
           </ul>
         </section>
+      )}
+
+      {guardado === "si" && (
+        <p className="marca mt-8">Guardado en su seguimiento ✓</p>
+      )}
+      {guardado === "error" && (
+        <p className="marca mt-8 text-ambar">
+          No se pudo guardar en el servidor; el resultado de hoy sigue siendo
+          válido.
+        </p>
       )}
 
       <div className="mt-14 flex flex-wrap gap-6">

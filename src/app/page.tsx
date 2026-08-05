@@ -29,7 +29,22 @@ export default function Inicio() {
           titulo="Acompaño a alguien"
           detalle="Cargar documentos y ver el seguimiento"
         />
+        <Puerta
+          numero="03"
+          href="/preguntar"
+          titulo="Pregúntale al baúl"
+          detalle="Respuestas desde sus documentos y las guías oficiales, con cita"
+        />
       </nav>
+
+      <p className="mt-10">
+        <Link
+          href="/acceso"
+          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
+        >
+          Entrar con una cuenta de demostración →
+        </Link>
+      </p>
 
       <footer className="mt-20 border-t border-linea pt-6">
         <Marca>Prototipo</Marca>

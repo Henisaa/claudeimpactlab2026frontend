@@ -42,12 +42,20 @@ export default function PanelCuidador() {
           </p>
         </div>
 
-        <Link
-          href="/cuidador/captura"
-          className="boton inline-flex items-center gap-3 border-2 border-tinta bg-papel-alto px-6 py-3 font-semibold no-underline transition-colors hover:bg-tinta hover:text-papel"
-        >
-          Fotografiar un documento
-        </Link>
+        <div className="flex flex-col gap-3">
+          <Link
+            href="/cuidador/captura"
+            className="boton inline-flex items-center gap-3 border-2 border-tinta bg-papel-alto px-6 py-3 font-semibold no-underline transition-colors hover:bg-tinta hover:text-papel"
+          >
+            Fotografiar un documento
+          </Link>
+          <Link
+            href="/preguntar"
+            className="boton inline-flex items-center gap-3 border-2 border-tinta bg-tinta px-6 py-3 font-semibold text-papel no-underline transition-colors hover:bg-papel-alto hover:text-tinta"
+          >
+            Pregúntale al baúl
+          </Link>
+        </div>
       </header>
 
       <section className="mt-12">

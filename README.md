@@ -90,14 +90,26 @@ funcionan sin ella, contra el caso sintético.
 - Sin diagnóstico ni indicación médica autónoma.
 - El profesional de salud permanece en el circuito de decisión.
 
+## Backend
+
+El repo `claudeimpactlab2026backend` expone la API en el puerto 4000:
+persistencia del baúl, roles (cuentas demo en `/acceso`, clave `demo1234`),
+consentimiento, auditoría y el RAG "Pregúntale al baúl" (`/preguntar`), que
+responde citando los documentos confirmados del paciente y el corpus oficial
+MINSAL. Con sesión iniciada, la captura guarda y confirma contra el backend y
+el check-in queda documentado en `seguimientos`; sin backend, todo sigue
+funcionando contra el caso sintético local.
+
+La matriz clínica se exporta al backend con `node scripts/exportar-matriz.ts`
+(la fuente de verdad sigue siendo `src/lib/matriz-etc.ts`).
+
 ## Pendiente
 
 1. Validación profesional: preguntas P1–P5 de `Tarea_01_Seleccion_Cirugia.txt`.
    P3 (calendario real de controles) y P4 (señales de alarma y escalamiento)
    son las que desbloquean las filas de la matriz.
-2. Los 5 casos sintéticos restantes con desenlace conocido, para medir falsas
-   alarmas contra un resultado esperado.
-3. Persistencia del baúl (hoy vive en memoria).
-4. Confirmación de campos: el flujo de "confirmar" está diseñado pero no escrito.
-5. Módulo pasivo de wearable (tendencia de movilidad). Roadmap declarado, fuera
+2. Pantalla de consentimiento en el frontend (el backend ya lo exige por API).
+3. Panel del cuidador leyendo el baúl persistente del backend (hoy muestra el
+   caso local; captura, chat y check-in ya son persistentes).
+4. Módulo pasivo de wearable (tendencia de movilidad). Roadmap declarado, fuera
    del camino de alertas por decisión explícita.

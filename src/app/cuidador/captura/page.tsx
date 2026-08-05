@@ -1,9 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Marca, Seccion } from "@/components/ui";
+import {
+  confirmarDocumento,
+  sesionActual,
+  subirDocumento,
+  type Sesion,
+} from "@/lib/api";
 
 /**
  * Captura → extracción → pre-llenado editable.
@@ -47,31 +53,58 @@ export default function Captura() {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [borrador, setBorrador] = useState<Borrador | null>(null);
+  const [sesion, setSesion] = useState<Sesion | null>(null);
+  const [documentoId, setDocumentoId] = useState<string | null>(null);
+  const [confirmado, setConfirmado] = useState(false);
+
+  useEffect(() => setSesion(sesionActual()), []);
 
   async function extraer() {
     if (archivos.length === 0) return;
     setCargando(true);
     setError(null);
     setBorrador(null);
-
-    const cuerpo = new FormData();
-    for (const archivo of archivos) cuerpo.append("imagenes", archivo);
+    setDocumentoId(null);
+    setConfirmado(false);
 
     try {
-      const respuesta = await fetch("/api/extraer", {
-        method: "POST",
-        body: cuerpo,
-      });
-      const datos = await respuesta.json();
-      if (!respuesta.ok) {
-        setError(datos.error ?? "No se pudo procesar el documento.");
-        return;
+      // Con sesión, el documento se guarda en el baúl persistente del backend
+      // (consentimiento y auditoría incluidos). Sin sesión, extracción local.
+      if (sesion?.pacienteActivo) {
+        const datos = await subirDocumento(sesion.pacienteActivo, archivos);
+        setBorrador(datos.borrador as Borrador);
+        setDocumentoId(datos.documentoId);
+      } else {
+        const cuerpo = new FormData();
+        for (const archivo of archivos) cuerpo.append("imagenes", archivo);
+        const respuesta = await fetch("/api/extraer", {
+          method: "POST",
+          body: cuerpo,
+        });
+        const datos = await respuesta.json();
+        if (!respuesta.ok) {
+          setError(datos.error ?? "No se pudo procesar el documento.");
+          return;
+        }
+        setBorrador(datos.borrador);
       }
-      setBorrador(datos.borrador);
-    } catch {
-      setError("No se pudo conectar con el servidor.");
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "No se pudo conectar con el servidor.",
+      );
     } finally {
       setCargando(false);
+    }
+  }
+
+  async function confirmar() {
+    if (!documentoId) return;
+    setError(null);
+    try {
+      await confirmarDocumento(documentoId);
+      setConfirmado(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo confirmar.");
     }
   }
 
@@ -134,7 +167,35 @@ export default function Captura() {
         </p>
       )}
 
+      {!sesion?.pacienteActivo && (
+        <p className="marca mt-5">
+          Sin sesión: la lectura no se guarda.{" "}
+          <Link href="/acceso" className="underline underline-offset-2">
+            Entrar para guardar en el baúl
+          </Link>
+        </p>
+      )}
+
       {borrador && <RevisionBorrador borrador={borrador} />}
+
+      {borrador && documentoId && !confirmado && (
+        <div className="mt-8">
+          <button
+            type="button"
+            onClick={confirmar}
+            className="border-2 border-tinta bg-tinta px-7 py-3 font-semibold text-papel transition-colors hover:bg-papel-alto hover:text-tinta"
+          >
+            Ya lo comparé con el papel: confirmar y guardar en el baúl
+          </button>
+        </div>
+      )}
+
+      {confirmado && (
+        <p className="surgir mt-8 border-l-4 border-verde bg-verde-claro px-6 py-5 text-lg">
+          Guardado en el baúl. Desde ahora estos datos aparecen en el
+          seguimiento y el baúl puede responder preguntas sobre ellos.
+        </p>
+      )}
 
       <footer className="mt-16 border-t border-linea pt-6">
         <Link
