@@ -47,7 +47,9 @@ export default function Acceso() {
   const [cargando, setCargando] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => setSesion(sesionActual()), []);
+  useEffect(() => {
+    setSesion(sesionActual());
+  }, []);
 
   async function entrar(usuario: string, destino: string) {
     setCargando(usuario);

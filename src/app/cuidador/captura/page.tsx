@@ -57,7 +57,9 @@ export default function Captura() {
   const [documentoId, setDocumentoId] = useState<string | null>(null);
   const [confirmado, setConfirmado] = useState(false);
 
-  useEffect(() => setSesion(sesionActual()), []);
+  useEffect(() => {
+    setSesion(sesionActual());
+  }, []);
 
   async function extraer() {
     if (archivos.length === 0) return;

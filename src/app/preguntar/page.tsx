@@ -40,8 +40,14 @@ export default function PreguntarAlBaul() {
   const [ocupado, setOcupado] = useState(false);
   const finRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => setSesion(sesionActual()), []);
-  useEffect(() => finRef.current?.scrollIntoView({ behavior: "smooth" }), [turnos]);
+  // Cuerpos con llaves a propósito: un effect nunca debe devolver nada que no
+  // sea la función de limpieza.
+  useEffect(() => {
+    setSesion(sesionActual());
+  }, []);
+  useEffect(() => {
+    finRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [turnos]);
 
   async function enviar(texto: string) {
     const limpia = texto.trim();
