@@ -27,9 +27,9 @@ interface Turno {
 }
 
 const SUGERENCIAS = [
-  "¿Hasta cuándo tomo el anticoagulante?",
+  "¿Para qué es el paracetamol que me dieron?",
   "¿Qué movimientos debo evitar con la pierna operada?",
-  "¿Cuándo es mi próximo control y dónde?",
+  "¿Hasta cuándo tomo el anticoagulante?",
   "¿Qué cuidados necesita la herida?",
 ];
 
