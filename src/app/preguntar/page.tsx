@@ -15,7 +15,7 @@ import {
  * Pregúntale al baúl — el RAG del proyecto.
  *
  * La respuesta se construye únicamente con fragmentos recuperados del baúl de
- * la persona (sus documentos confirmados) y del corpus oficial MINSAL/DEIS.
+ * la persona, fuentes oficiales y notas curatoriales clasificadas.
  * Cada afirmación lleva su cita [n]; si no hay respaldo, el sistema lo dice
  * en vez de inventar. No diagnostica, no evalúa gravedad, no toca dosis.
  */
@@ -166,9 +166,7 @@ export default function PreguntarAlBaul() {
                       {turno.respuesta.fragmentos.map((f) => (
                         <li key={f.n} className="text-sm text-tinta-media">
                           <span className="cifra">[{f.n}]</span>{" "}
-                          {f.tipo === "documento_paciente"
-                            ? "Documento del baúl"
-                            : "Fuente oficial"}
+                          {etiquetaFuente(f.tipo)}
                           : {f.fuente}
                           {f.url && (
                             <>
@@ -238,4 +236,19 @@ export default function PreguntarAlBaul() {
 
 function esSesion(s: Sesion | null | "cargando"): s is Sesion {
   return s !== null && s !== "cargando";
+}
+
+function etiquetaFuente(tipo: string) {
+  switch (tipo) {
+    case "documento_paciente":
+      return "Documento del baúl";
+    case "nota_proyecto":
+      return "Nota curada del proyecto";
+    case "matriz_clinica":
+      return "Matriz clínica con fuente";
+    case "guia_oficial":
+      return "Fuente oficial";
+    default:
+      return "Fuente no clasificada";
+  }
 }

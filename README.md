@@ -95,8 +95,8 @@ funcionan sin ella, contra el caso sintético.
 El repo `claudeimpactlab2026backend` expone la API en el puerto 4000:
 persistencia del baúl, roles (cuentas demo en `/acceso`, clave `demo1234`),
 consentimiento, auditoría y el RAG "Pregúntale al baúl" (`/preguntar`), que
-responde citando los documentos confirmados del paciente y el corpus oficial
-MINSAL. Con sesión iniciada, la captura guarda y confirma contra el backend y
+responde citando los documentos confirmados del paciente, las fuentes de la
+matriz y las notas curatoriales clasificadas. Con sesión iniciada, la captura guarda y confirma contra el backend y
 el check-in queda documentado en `seguimientos`; sin backend, todo sigue
 funcionando contra el caso sintético local.
 
