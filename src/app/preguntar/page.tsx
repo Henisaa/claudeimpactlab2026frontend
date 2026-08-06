@@ -165,8 +165,7 @@ export default function PreguntarAlBaul() {
                       {turno.respuesta.fragmentos.map((f) => (
                         <li key={f.n} className="text-sm text-tinta-media">
                           <span className="cifra">[{f.n}]</span>{" "}
-                          {etiquetaFuente(f.tipo)}
-                          : {f.fuente}
+                          {citaFuente(f.tipo, f.fuente)}
                           {f.url && (
                             <>
                               {" · "}
@@ -230,6 +229,19 @@ export default function PreguntarAlBaul() {
 
 function esSesion(s: Sesion | null | "cargando"): s is Sesion {
   return s !== null && s !== "cargando";
+}
+
+/**
+ * Etiqueta + nombre de la fuente sin repetirse: varias fuentes del corpus ya
+ * traen su tipo en el nombre («Nota curada del proyecto — Línea 03»), y
+ * anteponerle la etiqueta lo mostraba dos veces.
+ */
+function citaFuente(tipo: string, fuente: string) {
+  const etiqueta = etiquetaFuente(tipo);
+  const normalizar = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+  return normalizar(fuente).startsWith(normalizar(etiqueta))
+    ? fuente
+    : `${etiqueta}: ${fuente}`;
 }
 
 function etiquetaFuente(tipo: string) {
