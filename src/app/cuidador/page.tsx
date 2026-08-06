@@ -46,6 +46,21 @@ export default function PanelCuidador() {
         </Link>
       </div>
 
+      <Link
+        href="/cuidador/medicacion"
+        className="tarjeta mt-3 flex items-center justify-between gap-4 px-5 py-4 no-underline"
+      >
+        <span>
+          <span className="block font-bold">Medicación: fotos del día</span>
+          <span className="mt-0.5 block text-sm text-tinta-media">
+            Tomas, verificación y avisos por WhatsApp
+          </span>
+        </span>
+        <span aria-hidden className="shrink-0 text-xl text-tinta-tenue">
+          ›
+        </span>
+      </Link>
+
       <section className="tarjeta mt-6 px-5 py-5">
         <LineaTiempo matriz={MATRIZ_ETC} dia={dia} />
       </section>

@@ -180,3 +180,85 @@ export function procesarAvisos(pacienteId: string) {
     { method: "POST", body: JSON.stringify({}) },
   );
 }
+
+// --- Medicación fotografiada (prototipo) ------------------------------------
+
+export type ResultadoMedicacion =
+  | "coincide"
+  | "no_coincide"
+  | "no_se_puede_confirmar"
+  | "conflicto"
+  | "pendiente_revision";
+
+export interface PlanMedicacion {
+  id: string;
+  medicamento_nombre: string;
+  concentracion: string | null;
+  frecuencia_texto: string | null;
+  duracion_texto: string | null;
+  horario_local: string | null;
+  estado: string;
+}
+
+export interface VerificacionMedicacion {
+  id: string;
+  resultado_comparacion: ResultadoMedicacion;
+  nombre_observado: string | null;
+  concentracion_observada: string | null;
+  motivo: string | null;
+  requiere_revision_profesional: number;
+}
+
+export interface TomaMedicacion {
+  id: string;
+  plan_medicacion_id: string;
+  programada_para_utc: string;
+  fecha_local: string;
+  hora_local: string;
+  estado: string;
+  ventana_inicio: string | null;
+  ventana_fin: string | null;
+  declaracion: string | null;
+  medicamento_nombre: string;
+  concentracion: string | null;
+  horario_local: string | null;
+  frecuencia_texto: string | null;
+  duracion_texto: string | null;
+  evidencia: { id: string; capturada_en: string } | null;
+  verificacion: VerificacionMedicacion | null;
+}
+
+export function obtenerMedicacionHoy(pacienteId: string) {
+  return pedir<{ planes: PlanMedicacion[]; tomas: TomaMedicacion[] }>(
+    `/pacientes/${pacienteId}/medicacion/hoy`,
+  );
+}
+
+/** Solo DEMO_MODE: crea una toma "ahora" para que el pitch funcione a cualquier hora. */
+export function crearTomaDemo(pacienteId: string) {
+  return pedir<{ toma: TomaMedicacion }>(
+    `/pacientes/${pacienteId}/medicacion/demo/toma-hoy`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+
+export function enviarFotoToma(
+  tomaId: string,
+  archivo: File,
+  demoResultado?: string,
+) {
+  const cuerpo = new FormData();
+  cuerpo.append("imagen", archivo);
+  if (demoResultado) cuerpo.append("demoResultado", demoResultado);
+  return pedir<{ toma: TomaMedicacion; verificacion: VerificacionMedicacion }>(
+    `/medicacion/tomas/${tomaId}/foto`,
+    { method: "POST", body: cuerpo },
+  );
+}
+
+export function confirmarToma(tomaId: string, declaracion: "tomada" | "no_tomada") {
+  return pedir<{ ok: boolean; toma: TomaMedicacion }>(
+    `/medicacion/tomas/${tomaId}/confirmar`,
+    { method: "POST", body: JSON.stringify({ declaracion }) },
+  );
+}

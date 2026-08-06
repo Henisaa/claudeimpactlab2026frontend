@@ -1,0 +1,47 @@
+# Levanta el prototipo completo (frontend + backend) con un solo comando:
+#
+#   docker compose up --build
+#
+# Frontend:  http://localhost:3000
+# Backend:   http://localhost:4000  (health check: /api/v1/salud)
+#
+# El backend arranca con `npm run seed` antes de cada inicio: la demo queda
+# determinística (casos SYN-ETC, plan de medicación activo y usuarios demo)
+# y lista para el pitch. Claude corre en modo MOCK por defecto; para usar la
+# API real agregue ANTHROPIC_API_KEY y CLAUDE_MOCK=false al servicio backend.
+
+services:
+  backend:
+    build:
+      context: ../claudeimpactlab2026backend
+      dockerfile: Dockerfile
+    environment:
+      PORT: 4000
+      DEMO_MODE: "true"
+      CLAUDE_MOCK: "true"
+      JWT_SECRET: contigo-demo-secret
+      ENCRYPTION_KEY: contigo-demo-encryption-key
+      NOTIFICACIONES_PROVEEDOR: simulado
+      APP_URL: http://localhost:3000
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/api/v1/salud').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_URL: http://localhost:4000
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy

@@ -72,6 +72,13 @@ export default function CheckinPaciente() {
         <Progreso total={preguntas.length} actual={indice} />
       </header>
 
+      <Link
+        href="/paciente/medicacion"
+        className="boton-secundario mt-5 w-full text-center"
+      >
+        Fotografiar mi medicación de hoy
+      </Link>
+
       <h1
         key={pregunta.id}
         className="surgir mt-8 text-[1.75rem] font-bold leading-[1.2]"
