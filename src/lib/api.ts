@@ -100,6 +100,14 @@ export interface RespuestaBaul {
   respuesta: string;
   informacion_insuficiente: boolean;
   requiere_revision_profesional: boolean;
+  /** Citas literales ancladas por la API de Anthropic (Citations). */
+  citas: {
+    n: number;
+    textoCitado: string;
+    fuente: string | null;
+    tipo: string | null;
+    url: string | null;
+  }[];
   fragmentos: {
     n: number;
     tipo: string;

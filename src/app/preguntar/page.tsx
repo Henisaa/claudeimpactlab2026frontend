@@ -156,6 +156,22 @@ export default function PreguntarAlBaul() {
                   </p>
                 )}
 
+                {turno.respuesta.citas?.length > 0 && (
+                  <div className="mt-3.5 border-t border-dashed border-linea pt-3">
+                    <Marca>Textual de sus documentos</Marca>
+                    <ul className="mt-2 space-y-2">
+                      {turno.respuesta.citas.slice(0, 4).map((cita, j) => (
+                        <li
+                          key={j}
+                          className="border-l-[3px] border-primario-borde pl-3 text-sm italic leading-snug text-tinta-media"
+                        >
+                          «{cita.textoCitado}»
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {turno.respuesta.fragmentos.length > 0 && (
                   <details className="mt-3.5 border-t border-dashed border-linea pt-3">
                     <summary className="marca cursor-pointer hover:text-tinta">
