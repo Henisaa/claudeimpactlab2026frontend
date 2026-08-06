@@ -1,47 +1,51 @@
 @import "tailwindcss";
 
 /**
- * SISTEMA VISUAL — "la ficha"
+ * SISTEMA VISUAL — "la app que cuida"
  *
- * La app se lee como un documento clínico bien editado, no como un dashboard.
- * Tres decisiones que no son estéticas sino funcionales:
+ * App de teléfono para una persona de 65+ recién operada y para quien la
+ * acompaña. Decisiones funcionales, no estéticas:
  *
- *  1. Papel cálido, no blanco puro. El blanco #FFF a brillo alto deslumbra;
- *     un tono cálido baja el contraste especular sin bajar el de lectura.
- *  2. Serif de texto (Source Serif 4) para las preguntas al paciente. A tamaños
- *     grandes, un serif humanista con altura-x amplia se lee mejor y se percibe
- *     más calmado que un grotesco geométrico.
- *  3. Semáforo desaturado. Un rojo bombero grita; un rojo ladrillo informa.
- *     El objetivo declarado del producto es no generar falsas alarmas: eso
- *     también se decide en el color.
+ *  1. Paleta clínica calmada: base casi blanca y fría, un teal sanitario como
+ *     color de acción. Transmite "centro de salud ordenado", no "documento".
+ *  2. Sans humanista en todo, 18px de base mínimo, objetivos táctiles de 48px.
+ *  3. Estados del día en verde/ámbar/rojo legibles pero desaturados: el
+ *     objetivo del producto es no asustar; el color informa, no grita.
+ *  4. Tarjetas con radio amplio y sombra suave: cada acción es una tarjeta
+ *     que se toca, como en las apps que esta población ya usa (WhatsApp).
  *
- * Solo modo claro, a propósito. El modo oscuro con población mayor y contenido
- * clínico agrega riesgo de contraste sin beneficio real de uso.
+ * Solo modo claro, a propósito: contraste estable para lectura clínica.
  */
 
 @theme {
-  /* Papel e tinta */
-  --color-papel: oklch(0.985 0.006 85);
-  --color-papel-hondo: oklch(0.958 0.009 85);
-  --color-papel-alto: oklch(0.995 0.003 85);
-  --color-tinta: oklch(0.24 0.014 60);
-  --color-tinta-media: oklch(0.47 0.014 60);
-  --color-tinta-tenue: oklch(0.63 0.012 60);
-  --color-linea: oklch(0.88 0.012 75);
-  --color-linea-fuerte: oklch(0.78 0.014 75);
+  /* Base fría clínica (se mantienen los nombres históricos de los tokens) */
+  --color-papel: oklch(0.977 0.004 210);        /* fondo app */
+  --color-papel-hondo: oklch(0.949 0.008 210);  /* fondo hundido / hover */
+  --color-papel-alto: oklch(0.995 0.002 210);   /* tarjetas */
+  --color-tinta: oklch(0.27 0.025 245);         /* texto principal, slate */
+  --color-tinta-media: oklch(0.46 0.02 245);
+  --color-tinta-tenue: oklch(0.60 0.016 245);
+  --color-linea: oklch(0.905 0.008 220);
+  --color-linea-fuerte: oklch(0.82 0.012 220);
 
-  /* Semáforo: desaturado y serio */
-  --color-verde: oklch(0.47 0.088 155);
-  --color-verde-claro: oklch(0.945 0.028 155);
-  --color-ambar: oklch(0.6 0.115 70);
-  --color-ambar-claro: oklch(0.955 0.042 80);
-  --color-rojo: oklch(0.46 0.145 30);
-  --color-rojo-claro: oklch(0.945 0.032 30);
+  /* Color de acción: teal sanitario */
+  --color-primario: oklch(0.50 0.085 200);
+  --color-primario-hondo: oklch(0.42 0.08 200);
+  --color-primario-claro: oklch(0.945 0.025 200);
+  --color-primario-borde: oklch(0.85 0.04 200);
 
-  --font-titulo: var(--fuente-serif), Georgia, serif;
+  /* Estados del día: claros, clínicos, sin gritar */
+  --color-verde: oklch(0.50 0.10 155);
+  --color-verde-claro: oklch(0.955 0.028 155);
+  --color-ambar: oklch(0.58 0.115 70);
+  --color-ambar-claro: oklch(0.962 0.04 85);
+  --color-rojo: oklch(0.50 0.16 27);
+  --color-rojo-claro: oklch(0.955 0.026 27);
+
+  --font-titulo: var(--fuente-sans), system-ui, sans-serif;
   --font-texto: var(--fuente-sans), system-ui, sans-serif;
 
-  --radius-ficha: 0.75rem;
+  --radius-ficha: 1.25rem;
 }
 
 :root {
@@ -67,8 +71,8 @@ body {
   .marca {
     font-family: var(--font-texto);
     font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-tinta-tenue);
     font-variant-numeric: tabular-nums;
@@ -76,6 +80,59 @@ body {
 
   .cifra {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Tarjeta base de la app. */
+  .tarjeta {
+    background: var(--color-papel-alto);
+    border: 1px solid var(--color-linea);
+    border-radius: var(--radius-ficha);
+    box-shadow: 0 1px 2px oklch(0.27 0.025 245 / 0.05),
+      0 4px 14px oklch(0.27 0.025 245 / 0.05);
+  }
+
+  /* Botón principal: teal lleno, pill, táctil. */
+  .boton-primario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    background: var(--color-primario);
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+  .boton-primario:hover:not(:disabled) {
+    background: var(--color-primario-hondo);
+  }
+  .boton-primario:disabled {
+    background: var(--color-linea-fuerte);
+    cursor: not-allowed;
+  }
+
+  /* Botón secundario: contorno suave. */
+  .boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    background: var(--color-papel-alto);
+    border: 1.5px solid var(--color-primario-borde);
+    color: var(--color-primario-hondo);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .boton-secundario:hover {
+    background: var(--color-primario-claro);
+    border-color: var(--color-primario);
   }
 
   /**
@@ -101,9 +158,9 @@ select {
 }
 
 :focus-visible {
-  outline: 2.5px solid var(--color-tinta);
+  outline: 2.5px solid var(--color-primario);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 @keyframes surgir {

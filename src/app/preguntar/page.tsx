@@ -28,7 +28,7 @@ interface Turno {
 
 const SUGERENCIAS = [
   "¿Hasta cuándo tomo el anticoagulante?",
-  "¿Qué movimientos no puedo hacer con la pierna operada?",
+  "¿Qué movimientos debo evitar con la pierna operada?",
   "¿Cuándo es mi próximo control y dónde?",
   "¿Qué cuidados necesita la herida?",
 ];
@@ -71,19 +71,16 @@ export default function PreguntarAlBaul() {
 
   if (!esSesion(sesion) || !sesion.pacienteActivo) {
     return (
-      <main className="mx-auto w-full max-w-2xl px-6 py-14">
-        <Marca>Pregúntale al baúl</Marca>
-        <h1 className="mt-4 font-titulo text-4xl font-semibold leading-tight">
+      <main className="px-5 py-8">
+        <Marca>Pregunte con confianza</Marca>
+        <h1 className="mt-2 text-3xl font-bold leading-tight">
           Primero hay que entrar
         </h1>
-        <p className="mt-4 max-w-prose text-lg text-tinta-media">
+        <p className="mt-3 text-tinta-media">
           El baúl responde solo a la persona dueña de los documentos o a quien
-          ella autorizó. Entra con una cuenta de demostración.
+          ella autorizó. Entre con una cuenta de demostración.
         </p>
-        <Link
-          href="/acceso"
-          className="mt-8 inline-block border-2 border-tinta bg-papel-alto px-7 py-3 font-semibold no-underline transition-colors hover:bg-tinta hover:text-papel"
-        >
+        <Link href="/acceso" className="boton-primario mt-6">
           Ir al acceso
         </Link>
       </main>
@@ -91,83 +88,85 @@ export default function PreguntarAlBaul() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10 sm:py-14">
-      <header className="border-b-2 border-tinta pb-6">
-        <Marca>
-          Pregúntale al baúl · paciente {sesion.pacienteActivo} ·{" "}
-          {sesion.usuario.username}
-        </Marca>
-        <h1 className="mt-3 font-titulo text-4xl font-semibold leading-tight">
+    <main className="flex min-h-full flex-col px-5 py-6">
+      <header>
+        <Marca>Pregunte con confianza</Marca>
+        <h1 className="mt-1.5 text-2xl font-bold leading-tight">
           ¿Qué quiere saber?
         </h1>
-        <p className="mt-3 max-w-prose text-tinta-media">
-          Responde con los documentos del baúl y las guías oficiales del
-          Ministerio de Salud, citando de dónde sale cada cosa. No diagnostica
-          ni cambia indicaciones: si algo no está escrito, lo dice.
+        <p className="mt-2 text-sm text-tinta-media">
+          Le respondemos con sus propios documentos y las guías del Ministerio
+          de Salud, diciéndole siempre de dónde sale cada cosa. Si algo no está
+          escrito, se lo decimos con la misma confianza.
         </p>
       </header>
 
       {turnos.length === 0 && (
-        <div className="mt-10">
+        <div className="mt-6">
           <Marca>Preguntas frecuentes</Marca>
-          <div className="mt-4">
+          <div className="mt-3 space-y-2.5">
             {SUGERENCIAS.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => enviar(s)}
-                className="group flex w-full items-center justify-between gap-4 border-t border-linea px-1 py-5 text-left transition-colors last:border-b hover:bg-papel-hondo"
+                className="tarjeta flex w-full items-center justify-between gap-3 px-4.5 py-3.5 text-left transition-transform active:scale-[0.99] hover:border-primario-borde"
               >
-                <span className="font-titulo text-xl leading-snug">{s}</span>
-                <span aria-hidden className="text-tinta-tenue group-hover:text-tinta">→</span>
+                <span className="font-semibold leading-snug">{s}</span>
+                <span aria-hidden className="text-tinta-tenue">›</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      <div className="mt-8 space-y-10">
+      <div className="mt-6 flex-1 space-y-7">
         {turnos.map((turno, i) => (
           <article key={i} className="surgir">
-            <p className="border-l-2 border-tinta pl-5 font-titulo text-2xl leading-snug">
+            {/* La pregunta, como burbuja propia */}
+            <p className="ml-8 rounded-3xl rounded-br-md bg-primario px-5 py-3 text-white">
               {turno.pregunta}
             </p>
 
             {!turno.respuesta && !turno.error && (
-              <p className="marca mt-5 animate-pulse">
-                Buscando en el baúl y las guías oficiales…
+              <p className="marca mt-4 animate-pulse">
+                Buscando en sus documentos y las guías oficiales…
               </p>
             )}
 
             {turno.error && (
-              <p role="alert" className="mt-5 border-l-4 border-rojo bg-rojo-claro px-6 py-4">
+              <p role="alert" className="mt-4 rounded-2xl border border-rojo/25 bg-rojo-claro px-5 py-3.5">
                 {turno.error}
               </p>
             )}
 
             {turno.respuesta && (
-              <div className="mt-5">
-                <p className="whitespace-pre-line text-lg leading-relaxed">
+              <div className="tarjeta mt-3 mr-8 rounded-3xl rounded-tl-md px-5 py-4">
+                <p className="whitespace-pre-line leading-relaxed">
                   {turno.respuesta.respuesta}
                 </p>
 
                 {turno.respuesta.requiere_revision_profesional && (
-                  <p className="marca mt-4 text-ambar">
-                    Requiere confirmación del profesional de salud
+                  <p className="mt-3.5 flex items-start gap-2 rounded-xl bg-ambar-claro px-3.5 py-2.5 text-sm text-tinta">
+                    <span aria-hidden>💬</span>
+                    <span>
+                      Buen tema para su próximo control: confírmelo con su
+                      equipo de salud.
+                    </span>
                   </p>
                 )}
 
                 {turno.respuesta.fragmentos.length > 0 && (
-                  <details className="mt-5 border-t border-dashed border-linea-fuerte pt-4">
+                  <details className="mt-3.5 border-t border-dashed border-linea pt-3">
                     <summary className="marca cursor-pointer hover:text-tinta">
-                      Fuentes consultadas
+                      De dónde sale esta respuesta
                     </summary>
-                    <ul className="mt-3 space-y-1.5">
+                    <ul className="mt-2.5 space-y-1.5">
                       {turno.respuesta.fragmentos.map((f) => (
                         <li key={f.n} className="text-sm text-tinta-media">
                           <span className="cifra">[{f.n}]</span>{" "}
                           {f.tipo === "documento_paciente"
-                            ? "Documento del baúl"
+                            ? "Su documento"
                             : "Fuente oficial"}
                           : {f.fuente}
                           {f.url && (
@@ -196,42 +195,37 @@ export default function PreguntarAlBaul() {
       </div>
 
       <form
-        className="sticky bottom-0 mt-10 border-t-2 border-tinta bg-papel pb-6 pt-5"
+        className="sticky bottom-24 mt-6 rounded-3xl border border-linea bg-papel-alto p-2 shadow-lg shadow-tinta/5"
         onSubmit={(e) => {
           e.preventDefault();
           enviar(pregunta);
         }}
       >
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <input
             value={pregunta}
             onChange={(e) => setPregunta(e.target.value)}
             placeholder="Escriba su pregunta con sus palabras…"
             maxLength={500}
-            className="w-full border-2 border-linea-fuerte bg-papel-alto px-5 py-4 text-lg outline-none transition-colors placeholder:text-tinta-tenue focus:border-tinta"
+            className="w-full rounded-full bg-transparent px-4 py-3 outline-none placeholder:text-tinta-tenue"
           />
           <button
             type="submit"
             disabled={ocupado || !pregunta.trim()}
-            className="shrink-0 border-2 border-tinta bg-papel-alto px-6 font-semibold transition-colors hover:bg-tinta hover:text-papel disabled:cursor-not-allowed disabled:border-linea-fuerte disabled:text-tinta-tenue disabled:hover:bg-transparent"
+            aria-label="Enviar pregunta"
+            className="boton-primario min-h-12 shrink-0 px-5"
           >
-            {ocupado ? "…" : "Preguntar"}
+            {ocupado ? "…" : "Enviar"}
           </button>
         </div>
-        <p className="mt-3 text-sm text-tinta-media">
-          Ante una urgencia no espere una respuesta aquí: llame a los servicios
-          de urgencia o a Salud Responde, 600 360 7777.
-        </p>
       </form>
-
-      <footer className="mt-4 border-t border-linea pt-5">
-        <Link
-          href={sesion.usuario.tipo === "paciente" ? "/paciente" : "/cuidador"}
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
-        >
-          ← Volver
-        </Link>
-      </footer>
+      <p className="mt-3 text-center text-xs text-tinta-tenue">
+        Si se siente mal en este momento, la pestaña{" "}
+        <Link href="/ayuda" className="font-semibold text-rojo underline underline-offset-2">
+          Ayuda
+        </Link>{" "}
+        llama directo a quien puede atenderla.
+      </p>
     </main>
   );
 }

@@ -109,23 +109,23 @@ export default function Captura() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10 sm:py-14">
-      <header className="border-b-2 border-tinta pb-6">
+    <main className="px-5 py-7">
+      <header>
         <Marca>Captura</Marca>
-        <h1 className="mt-3 font-titulo text-4xl font-semibold leading-tight">
+        <h1 className="mt-2 text-3xl font-bold leading-tight">
           Fotografiar un documento
         </h1>
-        <p className="mt-3 max-w-prose text-tinta-media">
+        <p className="mt-2.5 text-tinta-media">
           El informe de alta, la receta o el papel de indicaciones. Tal como
           está: arrugado, con mala luz, torcido.
         </p>
       </header>
 
-      <label className="mt-10 block cursor-pointer border-2 border-dashed border-linea-fuerte bg-papel-alto px-7 py-10 text-center transition-colors hover:border-tinta hover:bg-papel-hondo">
-        <span className="block font-titulo text-2xl font-semibold">
+      <label className="mt-7 block cursor-pointer rounded-3xl border-2 border-dashed border-primario-borde bg-primario-claro/50 px-6 py-9 text-center transition-colors hover:border-primario hover:bg-primario-claro">
+        <span className="block text-xl font-bold text-primario-hondo">
           Elegir fotografías
         </span>
-        <span className="mt-2 block text-tinta-media">
+        <span className="mt-1.5 block text-sm text-tinta-media">
           JPG, PNG o WEBP · se pueden subir varias del mismo documento
         </span>
         <input
@@ -147,7 +147,7 @@ export default function Captura() {
         type="button"
         onClick={extraer}
         disabled={archivos.length === 0 || cargando}
-        className="mt-8 border-2 border-tinta bg-papel-alto px-7 py-3 font-semibold transition-colors hover:bg-tinta hover:text-papel disabled:cursor-not-allowed disabled:border-linea-fuerte disabled:bg-transparent disabled:text-tinta-tenue disabled:hover:bg-transparent"
+        className="boton-primario mt-6 w-full"
       >
         {cargando ? "Leyendo el documento…" : "Leer el documento"}
       </button>
@@ -161,7 +161,7 @@ export default function Captura() {
       {error && (
         <p
           role="alert"
-          className="surgir mt-8 border-l-4 border-rojo bg-rojo-claro px-6 py-5 text-lg"
+          className="surgir mt-6 rounded-2xl border border-rojo/25 bg-rojo-claro px-5 py-4"
         >
           {error}
         </p>
@@ -179,28 +179,24 @@ export default function Captura() {
       {borrador && <RevisionBorrador borrador={borrador} />}
 
       {borrador && documentoId && !confirmado && (
-        <div className="mt-8">
-          <button
-            type="button"
-            onClick={confirmar}
-            className="border-2 border-tinta bg-tinta px-7 py-3 font-semibold text-papel transition-colors hover:bg-papel-alto hover:text-tinta"
-          >
-            Ya lo comparé con el papel: confirmar y guardar en el baúl
+        <div className="mt-6">
+          <button type="button" onClick={confirmar} className="boton-primario w-full">
+            Ya lo comparé con el papel: guardar en el baúl
           </button>
         </div>
       )}
 
       {confirmado && (
-        <p className="surgir mt-8 border-l-4 border-verde bg-verde-claro px-6 py-5 text-lg">
-          Guardado en el baúl. Desde ahora estos datos aparecen en el
+        <p className="surgir mt-6 rounded-2xl border border-verde/25 bg-verde-claro px-5 py-4">
+          Guardado en el baúl ✓ Desde ahora estos datos aparecen en el
           seguimiento y el baúl puede responder preguntas sobre ellos.
         </p>
       )}
 
-      <footer className="mt-16 border-t border-linea pt-6">
+      <footer className="mt-8">
         <Link
           href="/cuidador"
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
+          className="text-primario-hondo underline underline-offset-4"
         >
           ← Volver al seguimiento
         </Link>
@@ -217,7 +213,7 @@ function RevisionBorrador({ borrador }: { borrador: Borrador }) {
           {borrador.advertencias.map((a, i) => (
             <li
               key={i}
-              className="border-l-4 border-rojo bg-rojo-claro px-6 py-4"
+              className="rounded-2xl border border-rojo/25 bg-rojo-claro px-5 py-3.5"
             >
               {a}
             </li>
@@ -226,7 +222,7 @@ function RevisionBorrador({ borrador }: { borrador: Borrador }) {
       )}
 
       {borrador.conflictos.length > 0 && (
-        <section className="mt-10 border-l-4 border-ambar bg-ambar-claro px-7 py-6">
+        <section className="mt-8 rounded-3xl border border-ambar/30 bg-ambar-claro px-5 py-5">
           <Marca className="text-tinta">Contradicciones sin resolver</Marca>
           <ul className="mt-4 space-y-2">
             {borrador.conflictos.map((c, i) => (
@@ -247,7 +243,7 @@ function RevisionBorrador({ borrador }: { borrador: Borrador }) {
         titulo="Borrador para revisar"
         descripcion="Compare cada valor con el papel antes de confirmarlo. El texto entre comillas es la cita literal de lo que dice el documento."
       >
-        <div className="mt-6">
+        <div className="tarjeta mt-4 px-5 py-5">
           <CampoBorrador etiqueta="Fecha de alta" campo={borrador.fecha_alta} />
           <CampoBorrador
             etiqueta="Indicaciones de curación"
@@ -285,7 +281,7 @@ function RevisionBorrador({ borrador }: { borrador: Borrador }) {
       </Seccion>
 
       {borrador.datos_faltantes.length > 0 && (
-        <section className="mt-12 border border-dashed border-linea-fuerte px-7 py-6">
+        <section className="mt-8 rounded-3xl border border-dashed border-linea-fuerte px-5 py-5">
           <Marca>El documento no dice</Marca>
           <ul className="mt-4 space-y-2 text-tinta-media">
             {borrador.datos_faltantes.map((d, i) => (

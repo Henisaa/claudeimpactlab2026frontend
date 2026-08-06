@@ -7,11 +7,10 @@ import { MATRIZ_ETC } from "@/lib/matriz-etc";
 import { diaRelativo, huecosDeLaMatriz } from "@/lib/motor";
 
 /**
- * Panel de quien acompaña. Densidad de herramienta profesional, no de app.
- *
- * Ve el baúl completo y, sobre todo, ve lo que falta: campos sin confirmar,
- * conflictos abiertos y huecos de la matriz clínica. Nada de eso se esconde:
- * esa lista de huecos ES la agenda de la conversación con el profesional.
+ * Panel de quien acompaña. Ve el baúl completo y, sobre todo, ve lo que
+ * falta: campos sin confirmar, conflictos abiertos y huecos de la matriz
+ * clínica. Nada de eso se esconde: esa lista de huecos ES la agenda de la
+ * conversación con el profesional.
  */
 export default function PanelCuidador() {
   const baul = CASO_RECUPERACION_ESPERADA;
@@ -28,46 +27,34 @@ export default function PanelCuidador() {
   ].filter((campo) => !campo.confirmado).length;
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-10 sm:py-14">
-      <header className="flex flex-wrap items-start justify-between gap-6 border-b-2 border-tinta pb-6">
-        <div>
-          <Marca>
-            Paciente {baul.pacienteId} · matriz {MATRIZ_ETC.id}
-          </Marca>
-          <h1 className="mt-3 font-titulo text-4xl font-semibold leading-tight">
-            Seguimiento
-          </h1>
-          <p className="mt-2 max-w-prose text-tinta-media">
-            {MATRIZ_ETC.cirugia} · CIE-10 {MATRIZ_ETC.cie10}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <Link
-            href="/cuidador/captura"
-            className="boton inline-flex items-center gap-3 border-2 border-tinta bg-papel-alto px-6 py-3 font-semibold no-underline transition-colors hover:bg-tinta hover:text-papel"
-          >
-            Fotografiar un documento
-          </Link>
-          <Link
-            href="/preguntar"
-            className="boton inline-flex items-center gap-3 border-2 border-tinta bg-tinta px-6 py-3 font-semibold text-papel no-underline transition-colors hover:bg-papel-alto hover:text-tinta"
-          >
-            Pregúntale al baúl
-          </Link>
-        </div>
+    <main className="px-5 py-7">
+      <header>
+        <Marca>
+          Paciente {baul.pacienteId} · {MATRIZ_ETC.cirugia}
+        </Marca>
+        <h1 className="mt-2 text-3xl font-bold leading-tight">
+          El baúl y su seguimiento
+        </h1>
       </header>
 
-      <section className="mt-12">
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <Link href="/cuidador/captura" className="boton-primario text-center text-sm">
+          Fotografiar documento
+        </Link>
+        <Link href="/preguntar" className="boton-secundario text-center text-sm">
+          Preguntar al baúl
+        </Link>
+      </div>
+
+      <section className="tarjeta mt-6 px-5 py-5">
         <LineaTiempo matriz={MATRIZ_ETC} dia={dia} />
       </section>
 
       <Seccion
-        numero="01"
         titulo="El baúl"
         descripcion="Cada dato conserva de qué documento salió, con cuánta certeza se leyó y si una persona ya lo verificó contra el papel original."
       >
-        <div className="mt-6">
+        <div className="tarjeta mt-4 px-5 py-5">
           <CampoFicha etiqueta="Fecha de alta" campo={baul.fechaAlta} />
           <CampoFicha
             etiqueta="Indicaciones de curación"
@@ -79,19 +66,19 @@ export default function PanelCuidador() {
             vacio="Sin fecha en el documento"
           />
 
-          <div className="border-t border-linea py-5">
+          <div className="border-t border-linea py-4">
             <Marca>Medicamentos</Marca>
-            <ul className="mt-4 space-y-6">
+            <ul className="mt-3 space-y-5">
               {baul.medicamentos.map((med, i) => (
                 <li key={i}>
                   <p
-                    className={`font-titulo text-2xl leading-snug ${
+                    className={`text-lg font-semibold leading-snug ${
                       med.confirmado ? "" : "sin-confirmar"
                     }`}
                   >
                     {med.valor?.nombre}
                   </p>
-                  <p className="mt-1 text-tinta-media">
+                  <p className="mt-0.5 text-sm text-tinta-media">
                     {med.valor?.dosis} · {med.valor?.frecuencia} ·{" "}
                     {med.valor?.duracion}
                   </p>
@@ -103,23 +90,23 @@ export default function PanelCuidador() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 border-l-2 border-linea-fuerte pl-4 text-sm text-tinta-media">
-              Las dosis, frecuencias y duraciones las escribió un profesional. El
-              sistema las transcribe y las trazabiliza; no las calcula, no las
-              convierte y no las completa.
+            <p className="mt-4 rounded-xl bg-papel-hondo px-4 py-3 text-xs text-tinta-media">
+              Las dosis, frecuencias y duraciones las escribió un profesional.
+              El sistema las transcribe y las trazabiliza; no las calcula, no
+              las convierte y no las completa.
             </p>
           </div>
         </div>
       </Seccion>
 
       {sinConfirmar > 0 && (
-        <section className="mt-10 border-l-4 border-ambar bg-ambar-claro px-7 py-6">
+        <section className="mt-6 rounded-3xl border border-ambar/30 bg-ambar-claro px-5 py-5">
           <Marca className="text-tinta">Pendiente de confirmación</Marca>
-          <p className="mt-3 font-titulo text-2xl leading-snug">
+          <p className="mt-2 text-xl font-bold leading-snug">
             <span className="cifra">{sinConfirmar}</span> datos esperan que
             alguien los verifique
           </p>
-          <p className="mt-2 max-w-prose text-tinta-media">
+          <p className="mt-1.5 text-sm text-tinta-media">
             Ningún dato extraído de una fotografía cuenta como cierto hasta que
             una persona lo revisa contra el papel. Los que quedan sin confirmar
             aparecen subrayados en punteado y no alimentan el seguimiento.
@@ -128,30 +115,23 @@ export default function PanelCuidador() {
       )}
 
       <Seccion
-        numero="02"
         titulo="Estado de la matriz clínica"
         descripcion="Mientras estos puntos no estén cerrados con un profesional de salud, el motor no dispara las alertas correspondientes. Esta lista es la agenda de esa conversación."
       >
-        <ol className="mt-6">
+        <ol className="mt-4 space-y-2.5">
           {huecos.map((hueco, i) => (
-            <li
-              key={i}
-              className="flex items-baseline gap-5 border-t border-linea py-4"
-            >
+            <li key={i} className="tarjeta flex items-baseline gap-3.5 px-4.5 py-3.5">
               <span className="marca cifra shrink-0">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="text-tinta-media">{hueco}</span>
+              <span className="text-sm text-tinta-media">{hueco}</span>
             </li>
           ))}
         </ol>
       </Seccion>
 
-      <footer className="mt-16 border-t border-linea pt-6">
-        <Link
-          href="/"
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
-        >
+      <footer className="mt-8">
+        <Link href="/" className="text-primario-hondo underline underline-offset-4">
           ← Volver al inicio
         </Link>
       </footer>

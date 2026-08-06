@@ -46,17 +46,17 @@ export function Sello({
   confirmado: boolean;
 }) {
   return (
-    <p className="marca mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+    <p className="marca mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1">
       <span
         aria-hidden
-        className={`inline-block size-2 rounded-[1px] ${TONO_CONFIANZA[confianza]}`}
+        className={`inline-block size-2 rounded-full ${TONO_CONFIANZA[confianza]}`}
       />
       <span>{ETIQUETA_ORIGEN[origen] ?? origen}</span>
-      <span className="text-linea-fuerte">/</span>
+      <span className="text-linea-fuerte">·</span>
       <span>lectura {confianza}</span>
-      <span className="text-linea-fuerte">/</span>
-      <span className={confirmado ? "" : "text-ambar"}>
-        {confirmado ? "confirmado" : "sin confirmar"}
+      <span className="text-linea-fuerte">·</span>
+      <span className={confirmado ? "text-verde" : "text-ambar"}>
+        {confirmado ? "confirmado ✓" : "sin confirmar"}
       </span>
     </p>
   );
@@ -73,19 +73,19 @@ export function CampoFicha({
   vacio?: string;
 }) {
   return (
-    <div className="border-t border-linea py-5">
+    <div className="border-t border-linea py-4 first:border-t-0 first:pt-0">
       <Marca>{etiqueta}</Marca>
       <p
-        className={`mt-2 font-titulo text-2xl leading-snug ${
+        className={`mt-1.5 text-lg font-semibold leading-snug ${
           campo.valor && !campo.confirmado ? "sin-confirmar" : ""
         }`}
       >
         {campo.valor ?? (
-          <span className="text-tinta-tenue italic">{vacio}</span>
+          <span className="font-normal italic text-tinta-tenue">{vacio}</span>
         )}
       </p>
       {campo.textoOriginal && (
-        <p className="mt-2 font-titulo text-base italic text-tinta-media">
+        <p className="mt-1.5 text-sm italic text-tinta-media">
           «{campo.textoOriginal}»
         </p>
       )}
@@ -95,7 +95,7 @@ export function CampoFicha({
         confirmado={campo.confirmado}
       />
       {campo.conflicto && (
-        <p className="mt-3 border-l-2 border-ambar bg-ambar-claro px-4 py-2 text-sm">
+        <p className="mt-2.5 rounded-xl bg-ambar-claro px-4 py-2.5 text-sm">
           {campo.conflicto}
         </p>
       )}
@@ -103,26 +103,24 @@ export function CampoFicha({
   );
 }
 
-/** Encabezado de sección con regla y numeral. */
+/** Encabezado de sección; el contenido va dentro de una tarjeta. */
 export function Seccion({
   numero,
   titulo,
   descripcion,
   children,
 }: {
-  numero: string;
+  numero?: string;
   titulo: string;
   descripcion?: string;
   children: ReactNode;
 }) {
+  void numero;
   return (
-    <section className="mt-14">
-      <div className="flex items-baseline gap-4 border-b-2 border-tinta pb-2">
-        <span className="marca cifra text-tinta">{numero}</span>
-        <h2 className="font-titulo text-2xl font-semibold">{titulo}</h2>
-      </div>
+    <section className="mt-9">
+      <h2 className="text-2xl font-bold leading-tight">{titulo}</h2>
       {descripcion && (
-        <p className="mt-3 max-w-prose text-tinta-media">{descripcion}</p>
+        <p className="mt-1.5 text-sm text-tinta-media">{descripcion}</p>
       )}
       {children}
     </section>

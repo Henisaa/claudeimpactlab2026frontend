@@ -17,20 +17,26 @@ import { cerrarSesion, ingresar, sesionActual, type Sesion } from "@/lib/api";
 const CUENTAS = [
   {
     usuario: "paciente@demo",
-    titulo: "María G. — paciente",
-    detalle: "Caso SYN-ETC-0001 · ve y pregunta sobre su propio baúl",
+    titulo: "María G.",
+    rol: "Paciente",
+    detalle: "Ve y pregunta sobre su propio baúl",
+    inicial: "M",
     destino: "/paciente",
   },
   {
     usuario: "cuidador@demo",
-    titulo: "Carmen T. — cuidadora",
-    detalle: "Autorizada por Elena T. (SYN-ETC-0007) · registra y consulta por ella",
+    titulo: "Carmen T.",
+    rol: "Persona de apoyo",
+    detalle: "Autorizada por Elena T. — registra y consulta por ella",
+    inicial: "C",
     destino: "/cuidador",
   },
   {
     usuario: "profesional@demo",
-    titulo: "E. Rojas — enfermera",
-    detalle: "Hospital Ficticio del Valle · revisa alertas y cierra el circuito",
+    titulo: "E. Rojas",
+    rol: "Enfermera",
+    detalle: "Hospital Ficticio del Valle — revisa alertas y cierra el circuito",
+    inicial: "E",
     destino: "/cuidador",
   },
 ] as const;
@@ -60,71 +66,68 @@ export default function Acceso() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-14 sm:py-20">
-      <Marca>Acceso · cuentas sintéticas de demostración</Marca>
-      <h1 className="mt-5 font-titulo text-5xl font-semibold leading-[1.05]">
-        ¿Quién entra?
-      </h1>
-      <p className="mt-6 max-w-prose text-lg leading-relaxed text-tinta-media">
-        Cada rol ve exactamente lo que la persona autorizó: nada más. Todos los
-        accesos quedan registrados en la auditoría.
+    <main className="px-5 py-8">
+      <Marca>Cuentas sintéticas de demostración</Marca>
+      <h1 className="mt-2 text-3xl font-bold leading-tight">¿Quién entra?</h1>
+      <p className="mt-3 text-tinta-media">
+        Cada rol ve exactamente lo que la persona autorizó: nada más. Todos
+        los accesos quedan registrados.
       </p>
 
       {sesion && (
-        <p className="mt-8 border-l-2 border-linea-fuerte pl-5 text-tinta-media">
-          Sesión activa: <strong>{sesion.usuario.username}</strong> ·{" "}
+        <div className="tarjeta mt-6 flex items-center justify-between gap-3 px-5 py-3.5">
+          <p className="truncate text-sm text-tinta-media">
+            Sesión activa: <strong className="text-tinta">{sesion.usuario.username}</strong>
+          </p>
           <button
             type="button"
-            className="underline underline-offset-4 hover:text-tinta"
+            className="shrink-0 text-sm font-semibold text-primario-hondo underline underline-offset-4"
             onClick={() => {
               cerrarSesion();
               setSesion(null);
             }}
           >
-            cerrar sesión
+            Cerrar sesión
           </button>
-        </p>
+        </div>
       )}
 
       {error && (
-        <p role="alert" className="mt-8 border-l-4 border-rojo bg-rojo-claro px-6 py-5">
+        <p role="alert" className="mt-6 rounded-2xl border border-rojo/25 bg-rojo-claro px-5 py-4">
           {error}
         </p>
       )}
 
-      <nav className="mt-12">
-        {CUENTAS.map((c, i) => (
+      <nav className="mt-7 space-y-3">
+        {CUENTAS.map((c) => (
           <button
             key={c.usuario}
             type="button"
             disabled={cargando !== null}
             onClick={() => entrar(c.usuario, c.destino)}
-            className="group flex w-full items-baseline gap-5 border-t border-linea py-7 text-left transition-colors last:border-b hover:bg-papel-hondo disabled:opacity-50 sm:gap-8"
+            className="tarjeta flex w-full items-center gap-4 px-5 py-4 text-left transition-transform active:scale-[0.99] disabled:opacity-50"
           >
-            <span className="marca cifra shrink-0 pt-2">
-              {String(i + 1).padStart(2, "0")}
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-primario-claro text-xl font-bold text-primario-hondo">
+              {c.inicial}
             </span>
             <span className="flex-1">
-              <span className="block font-titulo text-3xl font-semibold leading-tight">
+              <span className="block text-xl font-bold leading-snug">
                 {c.titulo}
+                <span className="ml-2 rounded-full bg-papel-hondo px-2.5 py-0.5 align-middle text-xs font-semibold text-tinta-media">
+                  {c.rol}
+                </span>
               </span>
-              <span className="mt-1 block text-tinta-media">{c.detalle}</span>
+              <span className="mt-0.5 block text-sm text-tinta-media">{c.detalle}</span>
             </span>
-            <span
-              aria-hidden
-              className="shrink-0 self-center text-2xl text-tinta-tenue transition-transform group-hover:translate-x-1 group-hover:text-tinta"
-            >
-              {cargando === c.usuario ? "…" : "→"}
+            <span aria-hidden className="text-xl text-tinta-tenue">
+              {cargando === c.usuario ? "…" : "›"}
             </span>
           </button>
         ))}
       </nav>
 
-      <footer className="mt-16 border-t border-linea pt-6">
-        <Link
-          href="/"
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
-        >
+      <footer className="mt-8">
+        <Link href="/" className="text-primario-hondo underline underline-offset-4">
           ← Volver al inicio
         </Link>
       </footer>

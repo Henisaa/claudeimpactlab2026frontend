@@ -34,7 +34,15 @@ export default function CheckinPaciente() {
   const [terminado, setTerminado] = useState(false);
 
   function responder(preguntaId: string, valor: string) {
-    setRespuestas({ ...respuestas, [preguntaId]: valor });
+    const nuevas = { ...respuestas, [preguntaId]: valor };
+    setRespuestas(nuevas);
+    // Si con lo ya respondido el motor determinístico dispara una alerta
+    // roja, la conversación se corta y se deriva de inmediato: no se sigue
+    // encuestando a una persona que reportó una señal de urgencia.
+    if (evaluar(MATRIZ_ETC, nuevas, dia).color === "rojo") {
+      setTerminado(true);
+      return;
+    }
     if (indice + 1 < preguntas.length) setIndice(indice + 1);
     else setTerminado(true);
   }
@@ -56,8 +64,8 @@ export default function CheckinPaciente() {
   const pregunta = preguntas[indice];
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-linea pb-4">
+    <main className="px-5 py-7">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <Marca>
           Día <span className="cifra">{dia}</span> después del alta
         </Marca>
@@ -66,27 +74,24 @@ export default function CheckinPaciente() {
 
       <h1
         key={pregunta.id}
-        className="surgir mt-12 font-titulo text-4xl font-semibold leading-[1.15] sm:text-[2.75rem]"
+        className="surgir mt-8 text-[1.75rem] font-bold leading-[1.2]"
       >
         {pregunta.texto}
       </h1>
 
-      <div key={`op-${pregunta.id}`} className="surgir mt-10">
+      <div key={`op-${pregunta.id}`} className="surgir mt-7 space-y-3">
         {pregunta.opciones.map((opcion) => (
           <button
             key={opcion.valor}
             type="button"
             onClick={() => responder(pregunta.id, opcion.valor)}
-            className="group flex w-full items-center justify-between gap-4 border-t border-linea px-1 py-6 text-left transition-colors last:border-b hover:bg-papel-hondo"
+            className="tarjeta flex w-full items-center justify-between gap-4 px-5 py-4.5 text-left transition-transform active:scale-[0.99] hover:border-primario-borde"
           >
-            <span className="font-titulo text-2xl leading-snug">
+            <span className="py-1 text-xl font-semibold leading-snug">
               {opcion.etiqueta}
             </span>
-            <span
-              aria-hidden
-              className="shrink-0 text-xl text-tinta-tenue transition-transform group-hover:translate-x-1 group-hover:text-tinta"
-            >
-              →
+            <span aria-hidden className="shrink-0 text-xl text-tinta-tenue">
+              ›
             </span>
           </button>
         ))}
@@ -96,7 +101,7 @@ export default function CheckinPaciente() {
         <button
           type="button"
           onClick={() => setIndice(indice - 1)}
-          className="mt-10 text-tinta-media underline underline-offset-4 hover:text-tinta"
+          className="mt-8 text-primario-hondo underline underline-offset-4"
         >
           ← Volver a la pregunta anterior
         </button>
@@ -119,7 +124,7 @@ function Progreso({ total, actual }: { total: number; actual: number }) {
       {Array.from({ length: total }, (_, i) => (
         <span
           key={i}
-          className={`h-1 w-6 ${i <= actual ? "bg-tinta" : "bg-linea"}`}
+          className={`h-1.5 w-6 rounded-full ${i <= actual ? "bg-primario" : "bg-linea"}`}
         />
       ))}
     </div>
@@ -155,27 +160,39 @@ function Resultado({
   }, [respuestas]);
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
+    <main className="px-5 py-7">
       <Semaforo color={evaluacion.color}>
         {evaluacion.alertas.length > 0 && (
-          <ul className="mt-8 space-y-6 border-t border-current/15 pt-7">
+          <ul className="mt-6 space-y-5 border-t border-current/15 pt-6">
             {evaluacion.alertas.map((alerta) => (
               <li key={alerta.reglaId}>
-                <p className="font-titulo text-xl leading-snug">
+                <p className="text-lg font-semibold leading-snug">
                   {alerta.senal.descripcion}
                 </p>
-                <p className="mt-2 text-lg font-semibold">{alerta.senal.accion}</p>
+                <p className="mt-1.5 text-lg font-bold">{alerta.senal.accion}</p>
               </li>
             ))}
           </ul>
         )}
 
+        {evaluacion.color === "rojo" && (
+          <Link href="/ayuda" className="boton-primario mt-6 w-full bg-rojo hover:bg-rojo">
+            Abrir Ayuda: llamar ahora
+          </Link>
+        )}
+        {evaluacion.color === "amarillo" && (
+          <p className="mt-5 text-tinta-media">
+            Su persona de apoyo puede ver este resultado y acompañarla en el
+            siguiente paso.
+          </p>
+        )}
+
         {evaluacion.color === "verde" && evaluacion.normalizaciones.length > 0 && (
-          <ul className="mt-8 space-y-5 border-t border-current/15 pt-7">
+          <ul className="mt-6 space-y-4 border-t border-current/15 pt-6">
             {evaluacion.normalizaciones.map((sintoma) => (
               <li key={sintoma.id} className="flex gap-3">
-                <span aria-hidden className="mt-2 h-px w-4 shrink-0 bg-verde" />
-                <span className="text-lg leading-relaxed">
+                <span aria-hidden className="mt-2.5 h-px w-4 shrink-0 bg-verde" />
+                <span className="leading-relaxed">
                   {sintoma.mensajeNormalizador}
                 </span>
               </li>
@@ -184,25 +201,35 @@ function Resultado({
         )}
       </Semaforo>
 
-      <section className="mt-16">
+      {guardado === "si" && (
+        <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-verde">
+          <span aria-hidden>✓</span> Guardado en su seguimiento — quien la
+          acompaña puede verlo
+        </p>
+      )}
+      {guardado === "error" && (
+        <p className="mt-4 text-sm text-tinta-media">
+          No se pudo guardar en el servidor; el resultado de hoy sigue siendo
+          válido.
+        </p>
+      )}
+
+      <section className="tarjeta mt-8 px-5 py-5">
         <LineaTiempo matriz={MATRIZ_ETC} dia={dia} />
       </section>
 
       {evaluacion.hitosProximos.length > 0 && (
-        <section className="mt-16">
-          <h2 className="border-b-2 border-tinta pb-2 font-titulo text-2xl font-semibold">
-            Lo que viene
-          </h2>
-          <ul>
+        <section className="mt-8">
+          <h2 className="text-2xl font-bold">Lo que viene</h2>
+          <ul className="mt-4 space-y-3">
             {evaluacion.hitosProximos.map((hito) => (
-              <li
-                key={hito.id}
-                className="flex items-baseline gap-5 border-b border-linea py-5"
-              >
-                <span className="marca cifra shrink-0">D+{hito.diaRelativo}</span>
+              <li key={hito.id} className="tarjeta flex items-center gap-4 px-5 py-4">
+                <span className="marca cifra shrink-0 rounded-full bg-primario-claro px-3 py-1.5 text-primario-hondo">
+                  D+{hito.diaRelativo}
+                </span>
                 <span>
-                  <span className="block font-titulo text-xl">{hito.titulo}</span>
-                  <span className="mt-1 block text-tinta-media">
+                  <span className="block font-bold">{hito.titulo}</span>
+                  <span className="mt-0.5 block text-sm text-tinta-media">
                     {hito.descripcion}
                   </span>
                 </span>
@@ -212,44 +239,31 @@ function Resultado({
         </section>
       )}
 
-      {guardado === "si" && (
-        <p className="marca mt-8">Guardado en su seguimiento ✓</p>
-      )}
-      {guardado === "error" && (
-        <p className="marca mt-8 text-ambar">
-          No se pudo guardar en el servidor; el resultado de hoy sigue siendo
-          válido.
-        </p>
-      )}
-
-      <div className="mt-14 flex flex-wrap gap-6">
+      <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
         <button
           type="button"
           onClick={onReiniciar}
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
+          className="text-primario-hondo underline underline-offset-4"
         >
           Responder de nuevo
         </button>
-        <Link
-          href="/"
-          className="text-tinta-media underline underline-offset-4 hover:text-tinta"
-        >
+        <Link href="/" className="text-primario-hondo underline underline-offset-4">
           Volver al inicio
         </Link>
       </div>
 
       {evaluacion.reglasBloqueadas.length > 0 && (
-        <details className="mt-16 border-t border-dashed border-linea-fuerte pt-5">
+        <details className="mt-12 border-t border-dashed border-linea-fuerte pt-4">
           <summary className="marca cursor-pointer hover:text-tinta">
-            {evaluacion.reglasBloqueadas.length} reglas no se evaluaron · vista
-            de desarrollo
+            Vista técnica · {evaluacion.reglasBloqueadas.length} reglas en
+            espera de validación
           </summary>
-          <p className="mt-4 max-w-prose text-sm text-tinta-media">
+          <p className="mt-3 text-sm text-tinta-media">
             El motor no dispara alertas sin fuente clínica verificada. Estas
-            quedan bloqueadas hasta la validación profesional, aunque la
+            quedan en espera hasta la validación profesional, aunque la
             respuesta del paciente coincida con la regla.
           </p>
-          <ul className="mt-4 space-y-2">
+          <ul className="mt-3 space-y-2">
             {evaluacion.reglasBloqueadas.map((r) => (
               <li key={r.reglaId} className="text-sm text-tinta-media">
                 <code className="font-mono text-xs text-tinta">{r.reglaId}</code>{" "}

@@ -1,18 +1,13 @@
-import type { Metadata } from "next";
-import { Public_Sans, Source_Serif_4 } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
 
-/**
- * Source Serif 4 — serif humanista diseñado para lectura en pantalla.
- * Public Sans — diseñada para servicios públicos, alta legibilidad en datos.
- * Ninguna de las dos es la fuente por defecto de nada, que es parte del punto.
- */
-const serif = Source_Serif_4({
-  variable: "--fuente-serif",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { Shell } from "@/components/shell";
 
+/**
+ * Public Sans — diseñada para servicios públicos, alta legibilidad en datos.
+ * Una sola familia en toda la app: menos ruido tipográfico para lectura 65+.
+ */
 const sans = Public_Sans({
   variable: "--fuente-sans",
   subsets: ["latin"],
@@ -20,19 +15,21 @@ const sans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Seguimiento postoperatorio",
+  title: "Contigo — acompañamiento después del alta",
   description:
     "Acompañamiento después del alta para la persona operada y quien la cuida.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="es"
-      className={`${serif.variable} ${sans.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-papel text-tinta">
-        {children}
+    <html lang="es" className={`${sans.variable} h-full antialiased`}>
+      <body className="min-h-full bg-papel text-tinta">
+        <Shell>{children}</Shell>
       </body>
     </html>
   );
