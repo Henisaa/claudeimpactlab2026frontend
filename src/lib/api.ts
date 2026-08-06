@@ -140,8 +140,35 @@ export function registrarCheckin(
   pacienteId: string,
   respuestas: Record<string, string>,
 ) {
-  return pedir<{ seguimientoId: string; evaluacion: unknown }>(
+  return pedir<{ seguimientoId: string; evaluacion: unknown; notificaciones: string[] }>(
     `/pacientes/${pacienteId}/checkins`,
     { method: "POST", body: JSON.stringify({ respuestas }) },
+  );
+}
+
+// --- Avisos a la persona de apoyo (canal WhatsApp) --------------------------
+
+export interface Aviso {
+  id: string;
+  canal: string;
+  destinatario_tipo: string;
+  evento: string;
+  estado: "pendiente" | "enviada" | "fallida" | "cancelada";
+  ultimo_error: string | null;
+  creada_en: string;
+  enviada_en: string | null;
+  mensaje: string | null;
+}
+
+export function verAvisos(pacienteId: string) {
+  return pedir<{ proveedor: string; notificaciones: Aviso[] }>(
+    `/pacientes/${pacienteId}/notificaciones`,
+  );
+}
+
+export function procesarAvisos(pacienteId: string) {
+  return pedir<{ enviadas: number; canceladas: number; fallidas: number }>(
+    `/pacientes/${pacienteId}/notificaciones/procesar`,
+    { method: "POST", body: JSON.stringify({}) },
   );
 }

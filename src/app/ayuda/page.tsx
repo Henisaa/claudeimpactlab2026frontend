@@ -1,19 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Marca } from "@/components/ui";
+import {
+  procesarAvisos,
+  sesionActual,
+  verAvisos,
+  type Aviso,
+} from "@/lib/api";
 
 /**
  * Ayuda — la pantalla que se prepara ANTES de necesitarla.
  *
- * Dos trabajos: (1) tener a un toque los números que de verdad responden una
- * urgencia, y (2) dejar lista la información que una emergencia siempre pide
- * y nadie recuerda en el momento. La app acompaña y prepara; la decisión
- * clínica es siempre de los servicios de salud.
+ * Tres trabajos: (1) tener a un toque los números que de verdad responden una
+ * urgencia, (2) dejar lista la información que una emergencia siempre pide y
+ * nadie recuerda en el momento, y (3) mostrar qué se le avisó a la persona de
+ * apoyo — el texto exacto, sin datos clínicos, y también los avisos que NO se
+ * enviaron por falta de consentimiento.
  */
 export default function Ayuda() {
-  const [avisado, setAvisado] = useState(false);
+  const [avisos, setAvisos] = useState<Aviso[] | null>(null);
+  const [ocupado, setOcupado] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function cargar() {
+    const sesion = sesionActual();
+    if (!sesion?.pacienteActivo) return;
+    try {
+      const datos = await verAvisos(sesion.pacienteActivo);
+      setAvisos(datos.notificaciones);
+    } catch {
+      setAvisos([]);
+    }
+  }
+
+  useEffect(() => {
+    void cargar();
+  }, []);
+
+  async function avisar() {
+    const sesion = sesionActual();
+    if (!sesion?.pacienteActivo) return;
+    setOcupado(true);
+    setError(null);
+    try {
+      await procesarAvisos(sesion.pacienteActivo);
+      await cargar();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo enviar el aviso.");
+    } finally {
+      setOcupado(false);
+    }
+  }
+
+  const pendientes = avisos?.filter((a) => a.estado === "pendiente").length ?? 0;
 
   return (
     <main className="px-5 py-7">
@@ -63,25 +104,64 @@ export default function Ayuda() {
 
         <button
           type="button"
-          onClick={() => setAvisado(true)}
-          disabled={avisado}
-          className="tarjeta flex w-full items-center gap-4 px-5 py-4 text-left"
+          onClick={avisar}
+          disabled={ocupado}
+          className="tarjeta flex w-full items-center gap-4 px-5 py-4 text-left disabled:opacity-60"
         >
           <IconoCorazon className="text-primario" />
           <span className="flex-1">
             <span className="block text-xl font-bold text-tinta">
-              {avisado ? "Aviso enviado ✓" : "Avisar a quien la acompaña"}
+              {ocupado ? "Enviando…" : "Avisar a quien la acompaña"}
             </span>
             <span className="text-tinta-media">
-              {avisado
-                ? "Su persona de apoyo recibió el aviso con su estado de hoy."
-                : "Un mensaje con su estado de hoy, sin tener que escribir."}
+              {pendientes > 0
+                ? `${pendientes} aviso(s) por enviar a su persona de apoyo.`
+                : "Un mensaje por WhatsApp con su estado de hoy, sin tener que escribir."}
             </span>
           </span>
         </button>
       </div>
 
-      <section className="mt-10">
+      {error && (
+        <p role="alert" className="mt-4 rounded-2xl border border-rojo/25 bg-rojo-claro px-5 py-3.5">
+          {error}
+        </p>
+      )}
+
+      {avisos && avisos.length > 0 && (
+        <section className="mt-9">
+          <h2 className="text-2xl font-bold leading-tight">
+            Lo que se le avisó a su persona de apoyo
+          </h2>
+          <p className="mt-2 text-sm text-tinta-media">
+            El aviso llega por WhatsApp y nunca lleva su nombre ni lo que
+            respondió: solo que hay algo que acompañar, y el enlace para verlo
+            dentro de la app.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {avisos.slice(0, 6).map((aviso) => (
+              <li key={aviso.id} className="tarjeta px-5 py-4">
+                <div className="flex items-center justify-between gap-3">
+                  <EstadoAviso estado={aviso.estado} />
+                  <span className="marca">{aviso.canal}</span>
+                </div>
+                {aviso.mensaje && (
+                  <p className="mt-2.5 rounded-2xl rounded-tl-md bg-verde-claro px-4 py-3 text-sm leading-relaxed">
+                    {aviso.mensaje}
+                  </p>
+                )}
+                {aviso.ultimo_error && (
+                  <p className="mt-2 text-sm text-tinta-media">
+                    No se envió: {aviso.ultimo_error}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="mt-9">
         <h2 className="text-2xl font-bold leading-tight">
           Preparados por si acaso
         </h2>
@@ -99,11 +179,24 @@ export default function Ayuda() {
 
       <p className="mt-8 rounded-2xl bg-papel-hondo px-5 py-4 text-sm text-tinta-media">
         Esta aplicación acompaña y organiza: no diagnostica ni reemplaza a los
-        servicios de urgencia. Prototipo con datos sintéticos; el aviso a la
-        persona de apoyo es simulado.
+        servicios de urgencia. Usted puede retirar en cualquier momento el
+        permiso para que la contactemos, y los avisos dejan de enviarse.
+        Prototipo con datos sintéticos.
       </p>
     </main>
   );
+}
+
+const ESTADOS: Record<string, { texto: string; clase: string }> = {
+  enviada: { texto: "Enviado ✓", clase: "text-verde" },
+  pendiente: { texto: "Por enviar", clase: "text-tinta-media" },
+  cancelada: { texto: "No enviado", clase: "text-ambar" },
+  fallida: { texto: "Falló el envío", clase: "text-rojo" },
+};
+
+function EstadoAviso({ estado }: { estado: string }) {
+  const { texto, clase } = ESTADOS[estado] ?? ESTADOS.pendiente;
+  return <span className={`text-sm font-bold ${clase}`}>{texto}</span>;
 }
 
 function Listo({ titulo, detalle }: { titulo: string; detalle: string }) {
