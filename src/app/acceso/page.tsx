@@ -58,10 +58,18 @@ export default function Acceso() {
       await ingresar(usuario, "demo1234");
       router.push(destino);
     } catch (e) {
+      // En local casi siempre es el backend apagado; publicado, casi siempre
+      // es configuración. El mensaje no debería mandar a mirar el puerto 4000
+      // a alguien que está en el sitio publicado.
+      const enLocal =
+        typeof window !== "undefined" &&
+        ["localhost", "127.0.0.1"].includes(window.location.hostname);
       setError(
         e instanceof Error
-          ? `${e.message} — ¿está corriendo el backend en el puerto 4000?`
-          : "No se pudo conectar con el backend.",
+          ? enLocal
+            ? `${e.message} — ¿está corriendo el backend en el puerto 4000?`
+            : e.message
+          : "No se pudo conectar con el servidor.",
       );
       setCargando(null);
     }

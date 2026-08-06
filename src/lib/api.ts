@@ -6,8 +6,18 @@
  * el backend agrega persistencia, no reemplaza la demo sin conexión.
  */
 
-const BASE =
-  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:4000";
+const BASE = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:4000";
+
+/**
+ * Desplegado sin NEXT_PUBLIC_BACKEND_URL, el bundle queda apuntando a
+ * localhost:4000: en el computador de quien programó "funciona" y para
+ * cualquier otra persona falla sin explicar por qué. Se detecta y se dice.
+ */
+function backendMalConfigurado() {
+  if (typeof window === "undefined") return false;
+  const enLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+  return !enLocal && BASE.includes("localhost");
+}
 
 export interface Sesion {
   token: string;
@@ -44,6 +54,12 @@ async function pedir<T>(
   opciones: RequestInit = {},
 ): Promise<T> {
   const sesion = sesionActual();
+  if (backendMalConfigurado()) {
+    throw new Error(
+      "Esta versión publicada no tiene configurada la dirección del servidor " +
+        "(falta NEXT_PUBLIC_BACKEND_URL en el despliegue).",
+    );
+  }
   const respuesta = await fetch(`${BASE}/api/v1${ruta}`, {
     ...opciones,
     headers: {
