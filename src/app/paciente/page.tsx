@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LineaTiempo } from "@/components/linea-tiempo";
 import { Semaforo } from "@/components/semaforo";
 import { Marca } from "@/components/ui";
-import { registrarCheckin, sesionActual } from "@/lib/api";
+import { obtenerVisitas, registrarCheckin, sesionActual, type Visita } from "@/lib/api";
 import { CASO_RECUPERACION_ESPERADA } from "@/lib/caso-sintetico";
 import { MATRIZ_ETC } from "@/lib/matriz-etc";
 import { diaRelativo, evaluar, preguntasDelDia } from "@/lib/motor";
@@ -117,6 +117,56 @@ export default function CheckinPaciente() {
   );
 }
 
+/** Las visitas que la enfermera particular ya fijó. */
+function VisitasAgendadas() {
+  const [visitas, setVisitas] = useState<Visita[]>([]);
+
+  useEffect(() => {
+    const sesion = sesionActual();
+    if (!sesion?.pacienteActivo) return;
+    obtenerVisitas(sesion.pacienteActivo)
+      .then((d) => setVisitas(d.visitas.filter((v) => v.estado === "programada")))
+      .catch(() => setVisitas([]));
+  }, []);
+
+  if (visitas.length === 0) return null;
+
+  return (
+    <section className="mt-8">
+      <h2 className="text-2xl font-bold">Su enfermera la visita</h2>
+      <ul className="mt-4 space-y-3">
+        {visitas.map((v) => (
+          <li key={v.id} className="tarjeta flex items-center gap-4 px-5 py-4">
+            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-primario-claro text-primario-hondo">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 10h18M7 3v3m10-3v3M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+              </svg>
+            </span>
+            <span>
+              <span className="block font-bold">
+                {v.fecha} · {v.hora}
+              </span>
+              <span className="mt-0.5 block text-sm text-tinta-media">
+                {v.motivo ?? "Visita de seguimiento"}
+                {v.nombre_profesional ? ` — ${v.nombre_profesional}` : ""}
+              </span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /** Progreso segmentado. Menos ansioso que una barra que se llena. */
 function Progreso({ total, actual }: { total: number; actual: number }) {
   return (
@@ -220,6 +270,8 @@ function Resultado({
           válido.
         </p>
       )}
+
+      <VisitasAgendadas />
 
       <section className="tarjeta mt-8 px-5 py-5">
         <LineaTiempo matriz={MATRIZ_ETC} dia={dia} />

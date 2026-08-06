@@ -262,3 +262,48 @@ export function confirmarToma(tomaId: string, declaracion: "tomada" | "no_tomada
     { method: "POST", body: JSON.stringify({ declaracion }) },
   );
 }
+
+// --- Visitas domiciliarias (enfermera particular) ---------------------------
+
+export interface Visita {
+  id: string;
+  fecha: string;
+  hora: string;
+  motivo: string | null;
+  estado: "programada" | "realizada" | "cancelada";
+  nombre_profesional?: string | null;
+  rol?: string | null;
+}
+
+export interface PacienteAgenda {
+  id: string;
+  nombre_ficticio: string;
+  rango_edad: string;
+  comuna_ficticia: string;
+  visitas: Visita[];
+}
+
+export function obtenerAgenda() {
+  return pedir<{ pacientes: PacienteAgenda[] }>("/profesional/agenda");
+}
+
+export function agendarVisita(
+  pacienteId: string,
+  datos: { fecha: string; hora: string; motivo: string },
+) {
+  return pedir<{ visita: Visita }>(`/pacientes/${pacienteId}/visitas`, {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export function marcarVisita(visitaId: string, estado: Visita["estado"]) {
+  return pedir<{ ok: boolean }>(`/visitas/${visitaId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ estado }),
+  });
+}
+
+export function obtenerVisitas(pacienteId: string) {
+  return pedir<{ visitas: Visita[] }>(`/pacientes/${pacienteId}/visitas`);
+}

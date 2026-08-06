@@ -34,10 +34,10 @@ const CUENTAS = [
   {
     usuario: "profesional@demo",
     titulo: "E. Rojas",
-    rol: "Enfermera",
-    detalle: "Hospital Ficticio del Valle — revisa alertas y cierra el circuito",
+    rol: "Enfermera particular",
+    detalle: "Agenda las visitas a domicilio y revisa cómo va la recuperación",
     inicial: "E",
-    destino: "/cuidador",
+    destino: "/profesional",
   },
 ] as const;
 
