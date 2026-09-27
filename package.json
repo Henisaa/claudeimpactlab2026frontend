@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "contraste": "node scripts/verificar-contraste.mjs",
+    "test:a11y": "playwright test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -16,6 +18,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

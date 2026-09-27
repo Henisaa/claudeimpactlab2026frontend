@@ -24,6 +24,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Contraste WCAG de la paleta, leído de los tokens reales de globals.css.
+      - run: npm run contraste
       # Next.js genera aquí los tipos (p. ej. LayoutProps) y compila TypeScript.
       - run: npm run build
         env:
@@ -59,3 +61,46 @@ jobs:
       - run: npm ci
       # Falla con vulnerabilidades altas o críticas en dependencias de producción.
       - run: npm audit --omit=dev --audit-level=high
+
+  accesibilidad:
+    name: Accesibilidad (axe + Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # INFORMATIVO hasta ver una primera ejecución verde en GitHub: en local pasa
+    # (Edge, 45/45), pero este job levanta el backend desde su repo y no se ha
+    # ejecutado aún en CI. Quitar `continue-on-error` cuando pase.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Henisaa/claudeimpactlab2026backend
+          path: backend
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+      - name: Backend (datos demo, Claude simulado)
+        working-directory: backend
+        run: |
+          npm ci
+          node src/seed.js
+          CORS_ORIGINS=http://localhost:3100 nohup node src/server.js > ../backend.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:4000/api/v1/salud && break || sleep 1; done
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:4000
+      - run: npm run test:a11y
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: informe-playwright
+          path: |
+            playwright-report/
+            test-results/
+            backend.log
