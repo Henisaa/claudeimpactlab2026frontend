@@ -66,9 +66,10 @@ jobs:
     name: Accesibilidad (axe + Playwright)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # INFORMATIVO hasta ver una primera ejecución verde en GitHub: en local pasa
-    # (Edge, 45/45), pero este job levanta el backend desde su repo y no se ha
-    # ejecutado aún en CI. Quitar `continue-on-error` cuando pase.
+    # Pasó por primera vez en GitHub el 2026-09-27 (Chromium, backend público).
+    # Se mantiene INFORMATIVO mientras el backend sea privado: clonarlo exige el
+    # secreto BACKEND_REPO_TOKEN (ver más abajo). Cuando el secreto exista y el
+    # job pase, quitar `continue-on-error`.
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
