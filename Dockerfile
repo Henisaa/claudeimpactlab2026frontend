@@ -2,7 +2,7 @@
 # La URL del backend se fija en tiempo de build para que el navegador
 # (http://localhost:3000) pueda alcanzarlo en http://localhost:4000.
 
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 RUN npm run build
 
 # Etapa de ejecución: solo .next + node_modules de producción.
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 
 WORKDIR /app
 
