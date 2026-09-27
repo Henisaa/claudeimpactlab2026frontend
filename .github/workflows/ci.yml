@@ -76,6 +76,11 @@ jobs:
         with:
           repository: Henisaa/claudeimpactlab2026backend
           path: backend
+          # Con el backend privado hace falta un token con permiso de lectura:
+          # crear el secreto BACKEND_REPO_TOKEN (PAT de grano fino, solo
+          # "Contents: read" sobre el repo del backend). Sin él, cae al token
+          # por defecto, que solo sirve si el backend es público.
+          token: ${{ secrets.BACKEND_REPO_TOKEN || github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
