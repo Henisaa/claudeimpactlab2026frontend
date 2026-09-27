@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
 
+import { SCRIPT_CONTRASTE } from "@/components/contraste";
 import { Shell } from "@/components/shell";
 
 /**
@@ -27,7 +28,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${sans.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${sans.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Aplica el alto contraste guardado antes de pintar (sin parpadeo). */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_CONTRASTE }} />
+      </head>
       <body className="min-h-full bg-papel text-tinta">
         <Shell>{children}</Shell>
       </body>

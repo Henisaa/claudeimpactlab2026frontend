@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { ContrasteToggle } from "@/components/contraste";
 import { sesionActual, type Sesion } from "@/lib/api";
 
 /**
@@ -24,27 +25,30 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-papel sm:border-x sm:border-linea">
       <header className="sticky top-0 z-20 border-b border-linea bg-papel-alto/90 backdrop-blur">
         <div className="flex items-center justify-between gap-3 px-5 py-3">
-          <Link href="/" className="flex items-center gap-2.5 no-underline">
+          <Link href="/" className="flex min-h-12 items-center gap-2.5 no-underline">
             <Logo />
             <span className="text-lg font-bold tracking-tight text-tinta">
               Contigo
             </span>
           </Link>
-          {sesion ? (
-            <Link
-              href="/acceso"
-              className="max-w-[11rem] truncate rounded-full bg-primario-claro px-3.5 py-1.5 text-sm font-semibold text-primario-hondo no-underline"
-            >
-              {sesion.usuario.username}
-            </Link>
-          ) : (
-            <Link
-              href="/acceso"
-              className="rounded-full border border-primario-borde px-3.5 py-1.5 text-sm font-semibold text-primario-hondo no-underline"
-            >
-              Entrar
-            </Link>
-          )}
+          <div className="flex items-center gap-2">
+            <ContrasteToggle />
+            {sesion ? (
+              <Link
+                href="/acceso"
+                className="inline-flex min-h-12 max-w-[9rem] items-center truncate rounded-full bg-primario-claro px-4 text-sm font-semibold text-primario-hondo no-underline"
+              >
+                {sesion.usuario.username}
+              </Link>
+            ) : (
+              <Link
+                href="/acceso"
+                className="inline-flex min-h-12 items-center rounded-full border border-primario-borde px-4 text-sm font-semibold text-primario-hondo no-underline"
+              >
+                Entrar
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 
@@ -130,7 +134,7 @@ function Pestana({
       >
         {icono}
       </svg>
-      <span className="text-[0.7rem] font-semibold">{etiqueta}</span>
+      <span className="text-sm font-semibold">{etiqueta}</span>
       <span
         aria-hidden
         className={`h-1 w-8 rounded-full ${
