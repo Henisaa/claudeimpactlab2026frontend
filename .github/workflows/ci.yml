@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Next.js genera aquí los tipos (p. ej. LayoutProps) y compila TypeScript.
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:4000
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # INFORMATIVO por ahora: hay 6 errores heredados de las reglas del compilador
+    # de React (react-hooks/set-state-in-effect, purity). Ver Bugs_y_Deuda #18 en el
+    # vault. Quitar `continue-on-error` cuando esa deuda esté saldada.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  audit:
+    name: Auditoría de dependencias
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Falla con vulnerabilidades altas o críticas en dependencias de producción.
+      - run: npm audit --omit=dev --audit-level=high
