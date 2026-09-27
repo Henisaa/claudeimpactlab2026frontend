@@ -137,14 +137,14 @@ export default function MedicacionCuidador() {
                       {textoResultado(t.verificacion.resultado_comparacion)}
                     </p>
                     {t.verificacion.motivo && (
-                      <p className="mt-1 text-xs text-tinta-media">
+                      <p className="mt-1 text-sm text-tinta-media">
                         {t.verificacion.motivo}
                       </p>
                     )}
                   </div>
                 )}
                 {t.evidencia && (
-                  <p className="marca mt-3 text-xs text-tinta-media">
+                  <p className="marca mt-3 text-sm text-tinta-media">
                     Foto recibida a las {t.evidencia.capturada_en}
                   </p>
                 )}
@@ -184,7 +184,7 @@ export default function MedicacionCuidador() {
                 <div className="flex items-center justify-between gap-3">
                   <p className="marca text-tinta">{a.evento.replaceAll("_", " ")}</p>
                   <span
-                    className={`marca shrink-0 rounded-full px-2.5 py-1 text-xs ${
+                    className={`marca shrink-0 rounded-full px-2.5 py-1 text-sm ${
                       a.estado === "enviada"
                         ? "bg-verde-claro text-verde"
                         : a.estado === "fallida" || a.estado === "cancelada"
@@ -201,7 +201,7 @@ export default function MedicacionCuidador() {
                   </p>
                 )}
                 {a.ultimo_error && (
-                  <p className="mt-1 text-xs text-tinta-tenue">{a.ultimo_error}</p>
+                  <p className="mt-1 text-sm text-tinta-tenue">{a.ultimo_error}</p>
                 )}
               </li>
             ))}

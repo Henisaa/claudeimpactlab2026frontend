@@ -69,7 +69,7 @@ export function LineaTiempo({
                 <span
                   aria-hidden
                   className={`grid size-2.5 shrink-0 place-items-center rounded-full ${
-                    pasado ? "bg-primario" : "border-2 border-linea-fuerte bg-papel-alto"
+                    pasado ? "bg-primario" : "border-2 border-borde-control bg-papel-alto"
                   }`}
                 />
                 <span
@@ -98,7 +98,7 @@ export function LineaTiempo({
             {sinFecha.map((hito) => (
               <li
                 key={hito.id}
-                className="rounded-full border border-dashed border-linea-fuerte px-3 py-1 text-xs text-tinta-media"
+                className="rounded-full border border-dashed border-linea-fuerte px-3 py-1 text-sm text-tinta-media"
               >
                 {hito.titulo}
               </li>

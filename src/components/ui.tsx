@@ -55,7 +55,7 @@ export function Sello({
       <span className="text-linea-fuerte">·</span>
       <span>lectura {confianza}</span>
       <span className="text-linea-fuerte">·</span>
-      <span className={confirmado ? "text-verde" : "text-ambar"}>
+      <span className={confirmado ? "text-verde" : "text-ambar-texto"}>
         {confirmado ? "confirmado ✓" : "sin confirmar"}
       </span>
     </p>

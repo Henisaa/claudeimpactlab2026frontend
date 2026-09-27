@@ -105,7 +105,7 @@ export default function PanelCuidador() {
                 </li>
               ))}
             </ul>
-            <p className="mt-4 rounded-xl bg-papel-hondo px-4 py-3 text-xs text-tinta-media">
+            <p className="mt-4 rounded-xl bg-papel-hondo px-4 py-3 text-sm text-tinta-media">
               Las dosis, frecuencias y duraciones las escribió un profesional.
               El sistema las transcribe y las trazabiliza; no las calcula, no
               las convierte y no las completa.

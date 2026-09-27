@@ -70,7 +70,7 @@ export default function Inicio() {
           su equipo de salud y le avisa cuándo corresponde consultar. Su
           equipo de salud y su persona de apoyo siguen siempre en el circuito.
         </p>
-        <p className="mt-2 text-xs text-tinta-tenue">
+        <p className="mt-2 text-sm text-tinta-tenue">
           Prototipo · Claude Impact Lab 2026 · datos sintéticos
         </p>
       </footer>

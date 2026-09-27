@@ -190,7 +190,7 @@ export default function Ayuda() {
 const ESTADOS: Record<string, { texto: string; clase: string }> = {
   enviada: { texto: "Enviado ✓", clase: "text-verde" },
   pendiente: { texto: "Por enviar", clase: "text-tinta-media" },
-  cancelada: { texto: "No enviado", clase: "text-ambar" },
+  cancelada: { texto: "No enviado", clase: "text-ambar-texto" },
   fallida: { texto: "Falló el envío", clase: "text-rojo" },
 };
 

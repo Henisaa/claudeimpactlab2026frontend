@@ -123,7 +123,7 @@ export default function Acceso() {
             <span className="flex-1">
               <span className="block text-xl font-bold leading-snug">
                 {c.titulo}
-                <span className="ml-2 rounded-full bg-papel-hondo px-2.5 py-0.5 align-middle text-xs font-semibold text-tinta-media">
+                <span className="ml-2 rounded-full bg-papel-hondo px-2.5 py-0.5 align-middle text-sm font-semibold text-tinta-media">
                   {c.rol}
                 </span>
               </span>

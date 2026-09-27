@@ -325,7 +325,7 @@ function Resultado({
           <ul className="mt-3 space-y-2">
             {evaluacion.reglasBloqueadas.map((r) => (
               <li key={r.reglaId} className="text-sm text-tinta-media">
-                <code className="font-mono text-xs text-tinta">{r.reglaId}</code>{" "}
+                <code className="font-mono text-sm text-tinta">{r.reglaId}</code>{" "}
                 — {r.motivo}
               </li>
             ))}

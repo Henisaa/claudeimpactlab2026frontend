@@ -238,7 +238,7 @@ export default function PreguntarAlBaul() {
           </button>
         </div>
       </form>
-      <p className="mt-3 text-center text-xs text-tinta-tenue">
+      <p className="mt-3 text-center text-sm text-tinta-tenue">
         Si se siente mal en este momento, la pestaña{" "}
         <Link href="/ayuda" className="font-semibold text-rojo underline underline-offset-2">
           Ayuda

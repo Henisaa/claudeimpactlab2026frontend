@@ -192,7 +192,7 @@ function FormVisita({
           type="date"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-linea-fuerte bg-papel-alto px-4 py-3"
+          className="mt-1 w-full rounded-xl border border-borde-control bg-papel-alto px-4 py-3"
         />
       </label>
       <label className="block">
@@ -201,7 +201,7 @@ function FormVisita({
           type="time"
           value={hora}
           onChange={(e) => setHora(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-linea-fuerte bg-papel-alto px-4 py-3"
+          className="mt-1 w-full rounded-xl border border-borde-control bg-papel-alto px-4 py-3"
         />
       </label>
       <label className="block">
@@ -210,7 +210,7 @@ function FormVisita({
           value={motivo}
           onChange={(e) => setMotivo(e.target.value)}
           maxLength={120}
-          className="mt-1 w-full rounded-xl border border-linea-fuerte bg-papel-alto px-4 py-3"
+          className="mt-1 w-full rounded-xl border border-borde-control bg-papel-alto px-4 py-3"
         />
       </label>
 

@@ -24,9 +24,10 @@
   --color-papel-alto: oklch(0.995 0.002 210);   /* tarjetas */
   --color-tinta: oklch(0.27 0.025 245);         /* texto principal, slate */
   --color-tinta-media: oklch(0.46 0.02 245);
-  --color-tinta-tenue: oklch(0.60 0.016 245);
+  --color-tinta-tenue: oklch(0.52 0.018 245);   /* metadatos: 5,15:1 sobre papel (antes 3,69) */
   --color-linea: oklch(0.905 0.008 220);
-  --color-linea-fuerte: oklch(0.82 0.012 220);
+  --color-linea-fuerte: oklch(0.82 0.012 220);  /* solo decorativo: 1,63:1, no usar en controles */
+  --color-borde-control: oklch(0.60 0.016 245); /* bordes de campos y marcadores de estado: >= 3:1 (WCAG 1.4.11) */
 
   /* Color de acción: teal sanitario */
   --color-primario: oklch(0.50 0.085 200);
@@ -37,10 +38,15 @@
   /* Estados del día: claros, clínicos, sin gritar */
   --color-verde: oklch(0.50 0.10 155);
   --color-verde-claro: oklch(0.955 0.028 155);
-  --color-ambar: oklch(0.58 0.115 70);
+  --color-ambar: oklch(0.58 0.115 70);          /* solo gráficos e íconos, no texto */
+  --color-ambar-texto: oklch(0.50 0.11 70);     /* texto ámbar: 5,50:1 sobre ambar-claro */
   --color-ambar-claro: oklch(0.962 0.04 85);
   --color-rojo: oklch(0.50 0.16 27);
   --color-rojo-claro: oklch(0.955 0.026 27);
+
+  /* Avisos neutros (visita agendada, recordatorio): ni bien ni alarma */
+  --color-info: oklch(0.50 0.12 250);
+  --color-info-claro: oklch(0.955 0.025 250);
 
   --font-titulo: var(--fuente-sans), system-ui, sans-serif;
   --font-texto: var(--fuente-sans), system-ui, sans-serif;
@@ -70,9 +76,9 @@ body {
   /* Etiqueta versalita: el recurso que marca metadatos en toda la app. */
   .marca {
     font-family: var(--font-texto);
-    font-size: 0.7rem;
+    font-size: 0.8rem; /* 14,4 px: el mínimo para metadatos */
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-tinta-tenue);
     font-variant-numeric: tabular-nums;
@@ -158,7 +164,7 @@ select {
 }
 
 :focus-visible {
-  outline: 2.5px solid var(--color-primario);
+  outline: 3px solid var(--color-primario-hondo);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -185,4 +191,31 @@ select {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/**
+ * Modo de alto contraste (opcional, lo activa la persona desde la cabecera).
+ * Para baja visión: texto casi negro sobre blanco, bordes firmes, sin sombras.
+ * Se prefiere a un modo oscuro para esta población.
+ */
+:root[data-contraste="alto"] {
+  --color-papel: oklch(1 0 0);
+  --color-papel-alto: oklch(1 0 0);
+  --color-papel-hondo: oklch(0.955 0.005 245);
+  --color-tinta: oklch(0.16 0.02 245);
+  --color-tinta-media: oklch(0.28 0.02 245);
+  --color-tinta-tenue: oklch(0.36 0.02 245);
+  --color-linea: oklch(0.45 0.02 245);
+  --color-linea-fuerte: oklch(0.38 0.02 245);
+  --color-borde-control: oklch(0.32 0.02 245);
+  --color-primario: oklch(0.40 0.09 200);
+  --color-primario-hondo: oklch(0.33 0.08 200);
+  --color-primario-borde: oklch(0.40 0.09 200);
+  --color-verde: oklch(0.40 0.10 155);
+  --color-ambar-texto: oklch(0.40 0.10 70);
+  --color-rojo: oklch(0.42 0.16 27);
+}
+:root[data-contraste="alto"] .tarjeta {
+  border-width: 2px;
+  box-shadow: none;
 }
