@@ -25,20 +25,21 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-papel sm:border-x sm:border-linea">
       <header className="sticky top-0 z-20 border-b border-linea bg-papel-alto/90 backdrop-blur">
         <div className="flex items-center justify-between gap-3 px-5 py-3">
-          <Link href="/" className="flex min-h-12 items-center gap-2.5 no-underline">
+          <Link href="/" className="flex min-h-12 shrink-0 items-center gap-2.5 no-underline">
             <Logo />
             <span className="text-lg font-bold tracking-tight text-tinta">
               Contigo
             </span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <ContrasteToggle />
             {sesion ? (
               <Link
                 href="/acceso"
-                className="inline-flex min-h-12 max-w-[9rem] items-center truncate rounded-full bg-primario-claro px-4 text-sm font-semibold text-primario-hondo no-underline"
+                title={sesion.usuario.username}
+                className="inline-flex min-h-12 min-w-0 items-center rounded-full bg-primario-claro px-3.5 text-sm font-semibold text-primario-hondo no-underline"
               >
-                {sesion.usuario.username}
+                <span className="truncate">{sesion.usuario.username}</span>
               </Link>
             ) : (
               <Link

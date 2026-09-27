@@ -97,3 +97,23 @@ test("los controles interactivos miden al menos 44 px de alto (móvil)", async (
   );
   expect(chicos, `controles bajo 44 px: ${JSON.stringify(chicos)}`).toEqual([]);
 });
+
+test("ninguna pantalla desborda el ancho del teléfono (sin scroll horizontal)", async ({ page }, info) => {
+  test.skip(info.project.name !== "movil", "solo aplica al teléfono");
+  const desbordadas: string[] = [];
+  let rolActual: Rol = null;
+  for (const { ruta, rol } of PANTALLAS) {
+    if (rol && rol !== rolActual) {
+      await entrar(page, rol);
+      rolActual = rol;
+    }
+    await page.goto(ruta);
+    await page.waitForLoadState("networkidle");
+    const { ancho, visible } = await page.evaluate(() => ({
+      ancho: document.documentElement.scrollWidth,
+      visible: document.documentElement.clientWidth,
+    }));
+    if (ancho > visible) desbordadas.push(`${ruta} (${ancho} > ${visible})`);
+  }
+  expect(desbordadas, `pantallas con scroll horizontal: ${desbordadas.join(", ")}`).toEqual([]);
+});

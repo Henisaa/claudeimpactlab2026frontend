@@ -434,7 +434,7 @@ function EtiquetaEstado({ estado }: { estado: string }) {
     tono: "bg-papel-hondo text-tinta-tenue",
   };
   return (
-    <span className={`marca shrink-0 rounded-full px-3 py-1.5 ${def.tono}`}>
+    <span className={`marca max-w-[55%] rounded-full px-3 py-1.5 text-center ${def.tono}`}>
       {def.texto}
     </span>
   );

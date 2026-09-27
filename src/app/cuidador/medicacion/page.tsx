@@ -184,7 +184,7 @@ export default function MedicacionCuidador() {
                 <div className="flex items-center justify-between gap-3">
                   <p className="marca text-tinta">{a.evento.replaceAll("_", " ")}</p>
                   <span
-                    className={`marca shrink-0 rounded-full px-2.5 py-1 text-sm ${
+                    className={`marca max-w-[55%] rounded-full px-2.5 py-1 text-center text-sm ${
                       a.estado === "enviada"
                         ? "bg-verde-claro text-verde"
                         : a.estado === "fallida" || a.estado === "cancelada"
@@ -250,7 +250,7 @@ function EtiquetaEstado({ estado }: { estado: string }) {
         ? "bg-rojo-claro text-rojo"
         : "bg-ambar/20 text-tinta";
   return (
-    <span className={`marca shrink-0 rounded-full px-3 py-1.5 ${tono}`}>
+    <span className={`marca max-w-[55%] rounded-full px-3 py-1.5 text-center ${tono}`}>
       {etiquetas[estado] ?? estado.replaceAll("_", " ")}
     </span>
   );
